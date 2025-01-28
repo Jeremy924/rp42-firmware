@@ -1,0 +1,6 @@
+../Core/Src/spi.c:101:6:MX_SPI3_Init	2
+../Core/Src/spi.c:157:6:HAL_SPI_MspInit	2
+../Core/Src/spi.c:187:6:HAL_SPI_MspDeInit	2
+../Core/Src/spi.c:212:6:sendCommand	1
+../Core/Src/spi.c:220:6:sendData	1
+../Core/Src/spi.c:228:6:setAddress	1

@@ -1,0 +1,6 @@
+../Core/Src/spi.c:101:6:MX_SPI3_Init	40	static
+../Core/Src/spi.c:157:6:HAL_SPI_MspInit	48	static
+../Core/Src/spi.c:187:6:HAL_SPI_MspDeInit	16	static
+../Core/Src/spi.c:212:6:sendCommand	16	static
+../Core/Src/spi.c:220:6:sendData	16	static
+../Core/Src/spi.c:228:6:setAddress	24	static

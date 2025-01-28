@@ -1,0 +1,9 @@
+../Core/Src/main.c:73:5:main	3
+../Core/Src/main.c:124:6:SystemClock_Config	4
+../Core/Src/main.c:168:5:bootloader	3
+../Core/Src/main.c:198:6:HAL_GPIO_EXTI_Callback	7
+../Core/Src/main.c:225:6:Powerdown	1
+../Core/Src/main.c:228:9:GetKey	15
+../Core/Src/main.c:285:9:Scan_Keyboard	17
+../Core/Src/main.c:331:6:Basic_Hardware_Test	9
+../Core/Src/main.c:399:6:Error_Handler	1

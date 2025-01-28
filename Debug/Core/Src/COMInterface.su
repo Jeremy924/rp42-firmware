@@ -1,0 +1,6 @@
+../Core/Src/COMInterface.c:14:16:run_console	1016	static,ignoring_inline_asm
+../Core/Src/COMInterface.c:531:10:ReadFill	32	static
+../Core/Src/COMInterface.c:563:10:Read	32	static
+../Core/Src/COMInterface.c:596:6:WriteBuf	24	static
+../Core/Src/COMInterface.c:601:6:_WriteString	16	static
+../Core/Src/COMInterface.c:605:6:WriteString	16	static

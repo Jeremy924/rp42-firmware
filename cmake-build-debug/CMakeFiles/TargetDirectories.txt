@@ -1,0 +1,3 @@
+C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench/cmake-build-debug/CMakeFiles/rp-tesbench.elf.dir
+C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench/cmake-build-debug/CMakeFiles/rebuild_cache.dir

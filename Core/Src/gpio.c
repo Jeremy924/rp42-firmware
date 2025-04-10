@@ -64,7 +64,7 @@ void MX_GPIO_Init(void)
                            PCPin PCPin */
   GPIO_InitStruct.Pin = COL0_Pin|COL1_Pin|COL2_Pin|COL3_Pin
                           |COL4_Pin|COL5_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
@@ -103,6 +103,7 @@ void MX_GPIO_Init(void)
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
+  HAL_NVIC_SetPriority(SVCall_IRQn, 15, 0);
 }
 
 /* USER CODE BEGIN 2 */

@@ -140,8 +140,34 @@ _Noreturn void run_console() {
 				char buf[20];
 				sprintf(buf, "%d\nfrw>", (int) status);
 				WriteString(buf);
-			} else if (strcmp(command, "P") == 0) {
+			} else if (strcmp(command, "test") == 0) {
+				CSP_QSPI_EnableMemoryMappedMode();
 
+				uint32_t original[100];
+				uint32_t* read = (uint32_t*) 0x90000000;
+				uint8_t pass = 1;
+
+				for (int i = 0; i < 100; i++) original[i] = read[i];
+
+				for (int i = 0; i < 100000; i++) {
+					if (i % 1000 == 0) {
+						char buf[15];
+						sprintf(buf, "% 2d%% complete\r", i / 1000);
+						WriteString(buf);
+					}
+					for (int j = 0; j < 100; j++)
+						if (original[j] != read[j]) {
+							char buf[15];
+							sprintf(buf, "Failed %d\n", i);
+							WriteString(buf);
+							pass = 0;
+							break;
+						}
+
+					if (pass == 0) break;
+				}
+
+				if (pass == 1) WriteString("Passed");
 			} else if (strcmp(command, "PWR ON") == 0) {
 				HAL_GPIO_WritePin(PWR_PERPH_GPIO_Port, PWR_PERPH_Pin, SET);
 				WriteString("\nfrw>");
@@ -393,6 +419,45 @@ _Noreturn void run_console() {
 								free(write_buf);
 							}
 						}
+			else if (size == 2 && command[0] == 'R' && command[1] == 'T') {
+				CSP_QSPI_EnableMemoryMappedMode();
+				const uint8_t* qspi = (uint8_t*) 0x90000000;
+
+				/*uint8_t* ptr = qspi;
+				uint8_t* end_ptr = qspi + 0x80000;
+				uint8_t repeats = 100;
+				uint32_t success = 1;
+				uint32_t last_value = -1;
+				// this was written in asm for fun, not for efficiency
+				asm(
+					"begin:\n"
+					"CBZ %1, end\n"
+					"SUB %1, %1, #1\n" // decrement repeats counter
+					"MOV %0 %3\n" // reset ptr to beginning
+					"inner_loop:\n"
+					"CMP %0, %2\n" // ptr == end_ptr
+					"BEQ begin\n"    // if ptr == end_ptr than go to beginning of loop
+					"ADD %0, %0, #1\n" // increment ptr by 1
+					"B inner_loop\n" // go to beginning of loop
+					"end:"
+					: "=r" (success)
+					: "r" (ptr), "r" (repeats), "r" (end_ptr), "r" (qspi));*/
+			}
+			else if (command[0] == 'C') {
+				uint8_t buf[256];
+				uint32_t check = 0;
+				// last couple of kilobytes aren't important
+				for (uint32_t address = 0; address < 800000; address+=256) {
+					CSP_QSPI_Read(buf, address, 256);
+					for (unsigned int i = 0; i < 256; i++)
+						if (buf[i] != 255)
+							check += buf[i]; // ignore the extra 1s where nothing has been written
+				}
+
+				char temp_buf[30];
+				sprintf(temp_buf, "%d\n", check);
+				WriteString(temp_buf);
+			}
 			 else if (command[0] == 'W') {
 			//uint8_t CSP_QSPI_Write(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
 							if (strcmp(strtok(command, " "), "W") != 0) {

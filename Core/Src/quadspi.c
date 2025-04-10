@@ -44,8 +44,8 @@ void MX_QUADSPI_Init(void)
 
   /* USER CODE END QUADSPI_Init 1 */
   hqspi.Instance = QUADSPI;
-  hqspi.Init.ClockPrescaler = 3;
-  hqspi.Init.FifoThreshold = 3;
+  hqspi.Init.ClockPrescaler = 1;
+  hqspi.Init.FifoThreshold = 1;
   hqspi.Init.SampleShifting = QSPI_SAMPLE_SHIFTING_NONE;
   hqspi.Init.FlashSize = 22;
   hqspi.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_1_CYCLE;
@@ -646,6 +646,16 @@ uint8_t CSP_QSPI_WriteMemory(uint8_t* pData, uint32_t WriteAddr, uint32_t Size)
 
   return HAL_OK;
 }
+
+void abort_memory_mapped_mode(QSPI_HandleTypeDef *hqspi) {
+    // Set the ABORT bit
+    SET_BIT(hqspi->Instance->CR, QUADSPI_CR_ABORT);
+    // Wait for the BUSY bit to be cleared
+    while (READ_BIT(hqspi->Instance->SR, QSPI_FLAG_BUSY) != 0) {
+        // Optionally, add a delay or a timeout mechanism
+    }
+}
+
 
 
 uint8_t CSP_QSPI_Read(uint8_t* pData, uint32_t ReadAddr, uint32_t Size)

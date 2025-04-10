@@ -24,9 +24,13 @@
 #include "usb_device.h"
 #include "gpio.h"
 
+#include <stdbool.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stm32l4xx_hal.h"
+#include "stm32l4xx.h"
+#include "stm32l475xx.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,6 +43,9 @@
 uint8_t Scan_Keyboard(void);
 void Basic_Hardware_Test();
 uint8_t GetKey(uint16_t pin);
+
+uint32_t system_call(uint16_t command, void* args);
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -50,15 +57,26 @@ uint8_t GetKey(uint16_t pin);
 
 /* USER CODE BEGIN PV */
 #define KEY_QUEUE_SIZE 5
-uint8_t key_queue[KEY_QUEUE_SIZE];
+uint8_t key_queue[KEY_QUEUE_SIZE] = {255, 255, 255, 255, 255};
+//uint32_t test[1000];
 uint8_t kqri = 0;
 uint8_t kqwi = 0;
+
+SystemCallData __attribute__((section(".SYS_CALL_DATA"))) systemCallData;
+
+/*uint64_t __attribute__((section("SYS_FUNC"))) (*sys_func)(uint16_t command, void* args);*/
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
+void reinitialize_qspi() {
+    // Deinitialize QSPI
+    HAL_QSPI_DeInit(&hqspi);
+    // Reinitialize QSPI with desired settings
+    MX_QUADSPI_Init();
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -74,7 +92,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -94,13 +111,24 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
+
   MX_QUADSPI_Init();
-  MX_SPI3_Init();
-  MX_USB_DEVICE_Init();
-  MX_FATFS_Init();
+
+  code = bootloader();
   /* USER CODE BEGIN 2 */
-  if (code == 2)
+  if (code == 2) {
+	  __set_PSP(malloc(1000));
+	  __asm("MRS R0, CONTROL");
+	  __asm("ORR R0, R0, #0x07");
+	  __asm("MSR CONTROL, R0");
+	  __asm("MRS R0, CONTROL");
+
+	  __DSB();
+	  __ISB();
+
 	  Basic_Hardware_Test();
+  }
 
   /* USER CODE END 2 */
 
@@ -135,13 +163,17 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_MSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
   RCC_OscInitStruct.MSICalibrationValue = 0;
   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
+  RCC_OscInitStruct.PLL.PLLM = 1;
+  RCC_OscInitStruct.PLL.PLLN = 40;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
+  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -151,12 +183,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV2;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV16;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV16;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -164,13 +196,25 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-void bootloader() {
+int bootloader() {
+	__HAL_FLASH_INSTRUCTION_CACHE_ENABLE();
+	__HAL_FLASH_DATA_CACHE_ENABLE();
+
+	SCB->SHCSR |= 0x70000;
+
+	//sys_func = system_call;
+
+	  HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin, GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(PWR_PERPH_GPIO_Port, PWR_PERPH_Pin, SET);
 	  HAL_Delay(10);
 
 	  int code = Scan_Keyboard();
 
 	  MX_QUADSPI_Init();
+	  MX_SPI3_Init();
+
+	  MX_USB_DEVICE_Init();
+	  MX_FATFS_Init();
 
 	  if (code != 1 && code != 2) {
 		  CSP_QSPI_EnableMemoryMappedMode();
@@ -180,26 +224,230 @@ void bootloader() {
 
 			// CDC_USB_DEINIT();
 
-			SCB->VTOR = 0x90000000;
+			//SCB->VTOR = 0x90000000;
 
 			typedef void (*free42App)(void);
 			free42App jumpToApp = (free42App) reset_vector;
 
-			__set_MSP(initial_sp);
+			__set_PSP(initial_sp);
+
+			  __asm("MRS R0, CONTROL");
+			  __asm("ORR R0, R0, #0x07");
+			  __asm("MSR CONTROL, R0");
+			  __asm("MRS R0, CONTROL");
+
+			  __DSB();
+			  __ISB();
+
 			jumpToApp();
 	  }
+
+	  return code;
 }
 
 uint8_t powered_down = 0;
+uint8_t last = 0;
+uint8_t last_down = 0;
+uint32_t last_time = 0;
+#define debounce_time 50
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+
+	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+	HAL_NVIC_DisableIRQ(EXTI1_IRQn);
+	HAL_NVIC_DisableIRQ(EXTI2_IRQn);
+	HAL_NVIC_DisableIRQ(EXTI3_IRQn);
+	HAL_NVIC_DisableIRQ(EXTI4_IRQn);
+
+	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+
 	uint8_t key = GetKey(GPIO_Pin);
+
+
+	//last = key;
+	//if (key != 255) last_down = key;
+	//last_time = HAL_GetTick();
+
 
 	key_queue[kqwi++] = key;
 	if (kqwi == KEY_QUEUE_SIZE) kqwi = 0;
+
+  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
+  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
+  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
+  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
+  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
+  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
+
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+	HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+	HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+	HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 void Powerdown() {
+}
+
+#define INDEX_OUT_OF_RANGE 0x0002
+#define INVALID_COMMAND 0x0001
+uint32_t system_status = 0;
+uint8_t LCD_BUFFER[132 * 4];
+
+#define NOP             0x0000
+#define GET_KEY         0x0001
+#define WA_KEY          0x0002
+#define PUSH_KEY        0x0003
+#define RELEASE_KEY     0x0004
+#define CLEAR_KEY_QUEUE 0x0005
+#define LCD_ON          0x0010
+#define LCD_OFF         0x0011
+#define DRAW_LCD        0x0012
+#define DRAW_PAGE0      0x0018
+#define DRAW_PAGE1      0x0019
+#define DRAW_PAGE2      0x001A
+#define DRAW_PAGE3      0x001B
+#define CLEAR_LCD       0x0013
+#define POWER_DOWN      0x0020
+#define GET_ERROR       0x0030
+#define CLEAR_ERROR     0x0031
+#define PASTE_TO_PC     0x0040
+#define SET_COPY_ISR    0x0041
+#define RM_COPY_ISR     0x0042
+#define SET_COPY_BUF    0x0043
+
+#define SET_STATUS(flag) system_status |= flag
+int TEMP_count = 0;
+uint32_t system_call(uint16_t command, void* args) {
+	uint32_t return_value = 0;
+	uint8_t key = 255;
+	uint8_t lcd_command = 0;
+	if (command == DRAW_LCD) {
+		uint8_t* buf = (uint8_t*) args;
+
+		for (unsigned int i = 0; i < 132*4; i++) {
+			LCD_BUFFER[i] = buf[i];
+		}
+
+		UpdateLCD();
+	}
+	switch (command) {
+	case NOP:
+		return *(uint32_t*) args;
+	case GET_KEY:
+		if (TEMP_count++ < 5)
+			return 19;//key_queue[kqri];
+		if (TEMP_count < 10)
+			return 17;
+
+		TEMP_count = 0;
+		return 13;
+		//return (uint32_t) Scan_Keyboard();
+	case WA_KEY:
+
+		bool should_wait = false;
+		__disable_irq();
+		should_wait = kqri == kqwi;
+		__enable_irq();
+
+		while (should_wait) {
+			HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+
+			__disable_irq();
+			should_wait = kqri == kqwi;
+			__enable_irq();
+			//abort_memory_mapped_mode();
+			//reinitialize_qspi();
+		}
+		key = key_queue[kqri++];
+		//uint8_t key = 255;
+		//while (key == 255) {
+		//	key = Scan_Keyboard();
+		//}
+		//uint8_t key = Scan_Keyboard();
+		if (kqri == KEY_QUEUE_SIZE) kqri = 0;
+
+		return key;
+	case PUSH_KEY:
+		key = *(uint8_t*) args;
+		if (key < 1 || key > 37) {
+			SET_STATUS(INDEX_OUT_OF_RANGE);
+			break;
+		}
+	case RELEASE_KEY:
+		key_queue[kqwi++] = key;
+		if (kqwi == KEY_QUEUE_SIZE) kqwi = 0;
+		break;
+	case CLEAR_KEY_QUEUE:
+		kqwi = kqri;
+		break;
+	case LCD_ON:
+		command = 0b10101111;
+	case LCD_OFF:
+		command = 0b10101110;
+		sendCommand(&command, 1);
+		break;
+	case DRAW_LCD:
+		//uint8_t* buf = (uint8_t*) args;
+
+		//UpdateLCD();
+		break;
+		uint8_t* test = 0;
+	case DRAW_PAGE0:
+	case DRAW_PAGE1:
+	case DRAW_PAGE2:
+	case DRAW_PAGE3:
+		uint8_t* draw_buf = (uint8_t*) args;
+		uint8_t page = command & (0b11); // page is the first two bits in the command
+		uint8_t* end = draw_buf + draw_buf[1] + 2; // start + length + 2 (ignore the start and size)
+		uint8_t* draw_target = LCD_BUFFER + page * 132 + draw_buf[0]; // buf[0] is start index of page
+
+		draw_buf += 2;
+		while (draw_buf != end) {
+			*draw_target = *draw_buf;
+			draw_target++;
+			draw_buf++;
+		}
+
+		UpdateLCD();
+		break;
+	case CLEAR_LCD:
+		for (unsigned int i = 0; i < 132 * 4; i++)
+			LCD_BUFFER[i] = 0;
+		UpdateLCD();
+		break;
+	case POWER_DOWN:
+		break;
+	case GET_ERROR:
+		system_status &= *(uint32_t*) args;
+	case CLEAR_ERROR:
+		return_value = system_status;
+		break;
+	case SET_COPY_ISR:
+		COPY_ISR = (void (*)(void *)) args;
+		break;
+	case RM_COPY_ISR:
+		COPY_ISR = NULL;
+		break;
+	case PASTE_TO_PC:
+		break;
+	default:
+		SET_STATUS(INVALID_COMMAND);
+	}
+
+	return 0;
+}
+
+void UpdateLCD() {
+	  setAddress(0, 0);
+	  sendData(LCD_BUFFER, 132);
+	  setAddress(1, 0);
+	  sendData(LCD_BUFFER + 132, 132);
+	  setAddress(2, 0);
+	  sendData(LCD_BUFFER + 132 * 2, 132);
+	  setAddress(3, 0);
+	  sendData(LCD_BUFFER + 132 * 3, 132);
 }
 
 uint8_t GetKey(uint16_t pin)
@@ -211,13 +459,16 @@ uint8_t GetKey(uint16_t pin)
 	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	  //EXTI->IMR1 &= ~(COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
+
+	  ROW0_GPIO_Port->BRR = ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin;
 
 	uint16_t rows = 0b10100011111;
 	uint8_t key_press = 255;
 
 	for (uint8_t r = 0; r < 11; r++) {
 		if ((rows & (1 << r)) == 0) continue;
-		ROW0_GPIO_Port->ODR |= (1 << r);
+		ROW0_GPIO_Port->BSRR = (1 << r);
 
 		int c = -1;
 
@@ -238,30 +489,46 @@ uint8_t GetKey(uint16_t pin)
 			if (row > 2) key_press++;
 			if (key_press > 13) key_press--;
 
-			ROW0_GPIO_Port->ODR &= ~(1 << r);
+			ROW0_GPIO_Port->BRR = (1 << r);
 			break;
 		}
 	}
 
+	  ROW0_GPIO_Port->BSRR = ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin;
 	  GPIO_InitStruct.Pin = COL0_Pin|COL1_Pin|COL2_Pin|COL3_Pin
 	                          |COL4_Pin|COL5_Pin;
-	  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
 	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+	  //NVIC_ClearPendingIRQ(EXTPin);
+	  //EXTI->IMR1 |= (COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
 
 	return key_press;
 }
 
+/**
+ * This code used to be better, but when setting up git, it deleted all the files, so I had to use an older backup of this file
+ *
+ */
 uint8_t Scan_Keyboard()
 {
-	uint16_t rows = 0b10100011111;
+	  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+	  GPIO_InitStruct.Pin = COL0_Pin|COL1_Pin|COL2_Pin|COL3_Pin
+	                          |COL4_Pin|COL5_Pin;
+	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	  EXTI->IMR1 &= ~(COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
+
+	uint16_t rows[] = {ROW0_Pin, ROW1_Pin, ROW2_Pin, ROW3_Pin, ROW4_Pin, ROW5_Pin, ROW6_Pin};
 	uint16_t columns = 0b111111;
 
 	int key_press = 255;
 
-	for (int r = 0; r < 11; r++) {
-		if ((rows & (1 << r)) == 0) continue;
-		ROW0_GPIO_Port->ODR |= (1 << r);
+	for (int r = 0; r < sizeof(rows); r++) {
+		HAL_GPIO_WritePin(ROW0_GPIO_Port, rows[r], SET);
 
 		int c = -1;
 
@@ -287,16 +554,25 @@ uint8_t Scan_Keyboard()
 			if (key_press > 13) key_press--;
 		}
 
-		ROW0_GPIO_Port->ODR &= ~(1 << r);
+		HAL_GPIO_WritePin(ROW0_GPIO_Port, rows[r], RESET);
 
 		if (key_press != 255)
 			break;
 
 	}
 
+	  GPIO_InitStruct.Pin = COL0_Pin|COL1_Pin|COL2_Pin|COL3_Pin
+	                          |COL4_Pin|COL5_Pin;
+	  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	  EXTI->IMR1 |= (COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
+
+	  ROW0_GPIO_Port->BSRR = ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin
+              |ROW4_Pin|ROW5_Pin|ROW6_Pin;
+
 	return key_press;
 }
-
 
 void Basic_Hardware_Test() {
 	HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin, GPIO_PIN_SET);
@@ -310,11 +586,14 @@ void Basic_Hardware_Test() {
 
 	  unsigned int page = 0;
 	  unsigned int column = 0;
-	  char zero[132] = {0};
-	  for (int p = 0; p < 4; p++) {
-		  setAddress(p, 0);
-		  sendData(zero, 132);
-	  }
+	  //char zero[132] = {0};
+	  //for (int p = 0; p < 4; p++) {
+		//  setAddress(p, 0);
+		 // sendData(zero, 132);
+	  //}
+	  //system_call(CLEAR_LCD, 0);
+	  systemCallData.command = CLEAR_LCD;
+	  __asm("SVC #0");
 
 	  while (1)
 	  {
@@ -323,18 +602,43 @@ void Basic_Hardware_Test() {
 
 		  //if (key == 33) Powerdown();
 
-		  HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
-		  if (kqri == kqwi) continue;
-		  uint8_t key = key_queue[kqri++];
-		  if (kqri == KEY_QUEUE_SIZE) kqri = 0;
+		  //HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+		  //if (kqri == kqwi) continue;
+		  systemCallData.command = WA_KEY;
+		  __asm("SVC #0");
+		  uint8_t key = (uint8_t) systemCallData.result;//(uint8_t) sys_func(WA_KEY, 0);//key_queue[kqri++];
 
 		  uint8_t ten = key / 10;
 		  uint8_t one = key % 10;
 
+		  if (key == 255) {
+			  ten = 3;
+			  one = 8;
+		  }
+
 		  uint8_t key_string[] = { ten + '0', one + '0', '\0' };
 
-		  setAddress(page, column);
-		  sendData(characters[ten], 5);
+		  systemCallData.command = DRAW_PAGE0 + page;
+
+		  uint8_t draw_data[2 + sizeof(characters[0])];
+		  draw_data[0] = column;
+		  draw_data[1] = sizeof(characters[0]);
+		  for (unsigned int i = 0; i < sizeof(characters[0]); i++)
+			  draw_data[2 + i] = characters[ten][i];
+		  systemCallData.args = draw_data;
+		  systemCallData.command = DRAW_PAGE0 + page;
+		  __asm("SVC #0");
+		  //system_call(DRAW_PAGE0 + page, draw_data);
+
+		  draw_data[0] += sizeof(characters[0]);
+		  for (unsigned int i = 0; i < sizeof(characters[0]); i++)
+			  draw_data[2 + i] = characters[one][i];
+		  __asm("SVC #0");
+		  //system_call(DRAW_PAGE0 + page, draw_data);
+
+
+		  //setAddress(page, column);
+		  //sendData(characters[ten], 5);
 
 		  column += 5;
 		  if (column > 131 - 5) {
@@ -345,8 +649,8 @@ void Basic_Hardware_Test() {
 			  }
 		  }
 
-		  setAddress(page, column);
-		  sendData(characters[one], 5);
+		  //setAddress(page, column);
+		  //sendData(characters[one], 5);
 
 		  column += 8;
 		  if (column > 131 - 5) {

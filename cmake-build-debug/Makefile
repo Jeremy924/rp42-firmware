@@ -116,24 +116,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named rp-tesbench.elf
+# Target rules for targets named rp-firmware.elf
 
 # Build rule for target.
-rp-tesbench.elf: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 rp-tesbench.elf
-.PHONY : rp-tesbench.elf
+rp-firmware.elf: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 rp-firmware.elf
+.PHONY : rp-firmware.elf
 
 # fast build rule for target.
-rp-tesbench.elf/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/build
-.PHONY : rp-tesbench.elf/fast
+rp-firmware.elf/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/build
+.PHONY : rp-firmware.elf/fast
 
 Core/Src/COMInterface.obj: Core/Src/COMInterface.c.obj
 .PHONY : Core/Src/COMInterface.obj
 
 # target to build an object file
 Core/Src/COMInterface.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/COMInterface.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/COMInterface.c.obj
 .PHONY : Core/Src/COMInterface.c.obj
 
 Core/Src/COMInterface.i: Core/Src/COMInterface.c.i
@@ -141,7 +141,7 @@ Core/Src/COMInterface.i: Core/Src/COMInterface.c.i
 
 # target to preprocess a source file
 Core/Src/COMInterface.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/COMInterface.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/COMInterface.c.i
 .PHONY : Core/Src/COMInterface.c.i
 
 Core/Src/COMInterface.s: Core/Src/COMInterface.c.s
@@ -149,7 +149,7 @@ Core/Src/COMInterface.s: Core/Src/COMInterface.c.s
 
 # target to generate assembly for a file
 Core/Src/COMInterface.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/COMInterface.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/COMInterface.c.s
 .PHONY : Core/Src/COMInterface.c.s
 
 Core/Src/gpio.obj: Core/Src/gpio.c.obj
@@ -157,7 +157,7 @@ Core/Src/gpio.obj: Core/Src/gpio.c.obj
 
 # target to build an object file
 Core/Src/gpio.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/gpio.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/gpio.c.obj
 .PHONY : Core/Src/gpio.c.obj
 
 Core/Src/gpio.i: Core/Src/gpio.c.i
@@ -165,7 +165,7 @@ Core/Src/gpio.i: Core/Src/gpio.c.i
 
 # target to preprocess a source file
 Core/Src/gpio.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/gpio.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/gpio.c.i
 .PHONY : Core/Src/gpio.c.i
 
 Core/Src/gpio.s: Core/Src/gpio.c.s
@@ -173,7 +173,7 @@ Core/Src/gpio.s: Core/Src/gpio.c.s
 
 # target to generate assembly for a file
 Core/Src/gpio.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/gpio.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/gpio.c.s
 .PHONY : Core/Src/gpio.c.s
 
 Core/Src/main.obj: Core/Src/main.c.obj
@@ -181,7 +181,7 @@ Core/Src/main.obj: Core/Src/main.c.obj
 
 # target to build an object file
 Core/Src/main.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/main.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/main.c.obj
 .PHONY : Core/Src/main.c.obj
 
 Core/Src/main.i: Core/Src/main.c.i
@@ -189,7 +189,7 @@ Core/Src/main.i: Core/Src/main.c.i
 
 # target to preprocess a source file
 Core/Src/main.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/main.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/main.c.i
 .PHONY : Core/Src/main.c.i
 
 Core/Src/main.s: Core/Src/main.c.s
@@ -197,7 +197,7 @@ Core/Src/main.s: Core/Src/main.c.s
 
 # target to generate assembly for a file
 Core/Src/main.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/main.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/main.c.s
 .PHONY : Core/Src/main.c.s
 
 Core/Src/quadspi.obj: Core/Src/quadspi.c.obj
@@ -205,7 +205,7 @@ Core/Src/quadspi.obj: Core/Src/quadspi.c.obj
 
 # target to build an object file
 Core/Src/quadspi.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/quadspi.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/quadspi.c.obj
 .PHONY : Core/Src/quadspi.c.obj
 
 Core/Src/quadspi.i: Core/Src/quadspi.c.i
@@ -213,7 +213,7 @@ Core/Src/quadspi.i: Core/Src/quadspi.c.i
 
 # target to preprocess a source file
 Core/Src/quadspi.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/quadspi.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/quadspi.c.i
 .PHONY : Core/Src/quadspi.c.i
 
 Core/Src/quadspi.s: Core/Src/quadspi.c.s
@@ -221,7 +221,7 @@ Core/Src/quadspi.s: Core/Src/quadspi.c.s
 
 # target to generate assembly for a file
 Core/Src/quadspi.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/quadspi.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/quadspi.c.s
 .PHONY : Core/Src/quadspi.c.s
 
 Core/Src/spi.obj: Core/Src/spi.c.obj
@@ -229,7 +229,7 @@ Core/Src/spi.obj: Core/Src/spi.c.obj
 
 # target to build an object file
 Core/Src/spi.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/spi.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/spi.c.obj
 .PHONY : Core/Src/spi.c.obj
 
 Core/Src/spi.i: Core/Src/spi.c.i
@@ -237,7 +237,7 @@ Core/Src/spi.i: Core/Src/spi.c.i
 
 # target to preprocess a source file
 Core/Src/spi.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/spi.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/spi.c.i
 .PHONY : Core/Src/spi.c.i
 
 Core/Src/spi.s: Core/Src/spi.c.s
@@ -245,7 +245,7 @@ Core/Src/spi.s: Core/Src/spi.c.s
 
 # target to generate assembly for a file
 Core/Src/spi.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/spi.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/spi.c.s
 .PHONY : Core/Src/spi.c.s
 
 Core/Src/stm32l4xx_hal_msp.obj: Core/Src/stm32l4xx_hal_msp.c.obj
@@ -253,7 +253,7 @@ Core/Src/stm32l4xx_hal_msp.obj: Core/Src/stm32l4xx_hal_msp.c.obj
 
 # target to build an object file
 Core/Src/stm32l4xx_hal_msp.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/stm32l4xx_hal_msp.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/stm32l4xx_hal_msp.c.obj
 .PHONY : Core/Src/stm32l4xx_hal_msp.c.obj
 
 Core/Src/stm32l4xx_hal_msp.i: Core/Src/stm32l4xx_hal_msp.c.i
@@ -261,7 +261,7 @@ Core/Src/stm32l4xx_hal_msp.i: Core/Src/stm32l4xx_hal_msp.c.i
 
 # target to preprocess a source file
 Core/Src/stm32l4xx_hal_msp.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/stm32l4xx_hal_msp.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/stm32l4xx_hal_msp.c.i
 .PHONY : Core/Src/stm32l4xx_hal_msp.c.i
 
 Core/Src/stm32l4xx_hal_msp.s: Core/Src/stm32l4xx_hal_msp.c.s
@@ -269,7 +269,7 @@ Core/Src/stm32l4xx_hal_msp.s: Core/Src/stm32l4xx_hal_msp.c.s
 
 # target to generate assembly for a file
 Core/Src/stm32l4xx_hal_msp.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/stm32l4xx_hal_msp.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/stm32l4xx_hal_msp.c.s
 .PHONY : Core/Src/stm32l4xx_hal_msp.c.s
 
 Core/Src/stm32l4xx_it.obj: Core/Src/stm32l4xx_it.c.obj
@@ -277,7 +277,7 @@ Core/Src/stm32l4xx_it.obj: Core/Src/stm32l4xx_it.c.obj
 
 # target to build an object file
 Core/Src/stm32l4xx_it.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/stm32l4xx_it.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/stm32l4xx_it.c.obj
 .PHONY : Core/Src/stm32l4xx_it.c.obj
 
 Core/Src/stm32l4xx_it.i: Core/Src/stm32l4xx_it.c.i
@@ -285,7 +285,7 @@ Core/Src/stm32l4xx_it.i: Core/Src/stm32l4xx_it.c.i
 
 # target to preprocess a source file
 Core/Src/stm32l4xx_it.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/stm32l4xx_it.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/stm32l4xx_it.c.i
 .PHONY : Core/Src/stm32l4xx_it.c.i
 
 Core/Src/stm32l4xx_it.s: Core/Src/stm32l4xx_it.c.s
@@ -293,7 +293,7 @@ Core/Src/stm32l4xx_it.s: Core/Src/stm32l4xx_it.c.s
 
 # target to generate assembly for a file
 Core/Src/stm32l4xx_it.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/stm32l4xx_it.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/stm32l4xx_it.c.s
 .PHONY : Core/Src/stm32l4xx_it.c.s
 
 Core/Src/syscalls.obj: Core/Src/syscalls.c.obj
@@ -301,7 +301,7 @@ Core/Src/syscalls.obj: Core/Src/syscalls.c.obj
 
 # target to build an object file
 Core/Src/syscalls.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/syscalls.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/syscalls.c.obj
 .PHONY : Core/Src/syscalls.c.obj
 
 Core/Src/syscalls.i: Core/Src/syscalls.c.i
@@ -309,7 +309,7 @@ Core/Src/syscalls.i: Core/Src/syscalls.c.i
 
 # target to preprocess a source file
 Core/Src/syscalls.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/syscalls.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/syscalls.c.i
 .PHONY : Core/Src/syscalls.c.i
 
 Core/Src/syscalls.s: Core/Src/syscalls.c.s
@@ -317,7 +317,7 @@ Core/Src/syscalls.s: Core/Src/syscalls.c.s
 
 # target to generate assembly for a file
 Core/Src/syscalls.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/syscalls.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/syscalls.c.s
 .PHONY : Core/Src/syscalls.c.s
 
 Core/Src/sysmem.obj: Core/Src/sysmem.c.obj
@@ -325,7 +325,7 @@ Core/Src/sysmem.obj: Core/Src/sysmem.c.obj
 
 # target to build an object file
 Core/Src/sysmem.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/sysmem.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/sysmem.c.obj
 .PHONY : Core/Src/sysmem.c.obj
 
 Core/Src/sysmem.i: Core/Src/sysmem.c.i
@@ -333,7 +333,7 @@ Core/Src/sysmem.i: Core/Src/sysmem.c.i
 
 # target to preprocess a source file
 Core/Src/sysmem.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/sysmem.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/sysmem.c.i
 .PHONY : Core/Src/sysmem.c.i
 
 Core/Src/sysmem.s: Core/Src/sysmem.c.s
@@ -341,7 +341,7 @@ Core/Src/sysmem.s: Core/Src/sysmem.c.s
 
 # target to generate assembly for a file
 Core/Src/sysmem.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/sysmem.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/sysmem.c.s
 .PHONY : Core/Src/sysmem.c.s
 
 Core/Src/system_stm32l4xx.obj: Core/Src/system_stm32l4xx.c.obj
@@ -349,7 +349,7 @@ Core/Src/system_stm32l4xx.obj: Core/Src/system_stm32l4xx.c.obj
 
 # target to build an object file
 Core/Src/system_stm32l4xx.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/system_stm32l4xx.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/system_stm32l4xx.c.obj
 .PHONY : Core/Src/system_stm32l4xx.c.obj
 
 Core/Src/system_stm32l4xx.i: Core/Src/system_stm32l4xx.c.i
@@ -357,7 +357,7 @@ Core/Src/system_stm32l4xx.i: Core/Src/system_stm32l4xx.c.i
 
 # target to preprocess a source file
 Core/Src/system_stm32l4xx.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/system_stm32l4xx.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/system_stm32l4xx.c.i
 .PHONY : Core/Src/system_stm32l4xx.c.i
 
 Core/Src/system_stm32l4xx.s: Core/Src/system_stm32l4xx.c.s
@@ -365,7 +365,7 @@ Core/Src/system_stm32l4xx.s: Core/Src/system_stm32l4xx.c.s
 
 # target to generate assembly for a file
 Core/Src/system_stm32l4xx.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Src/system_stm32l4xx.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/system_stm32l4xx.c.s
 .PHONY : Core/Src/system_stm32l4xx.c.s
 
 Core/Startup/startup_stm32l475rctx.obj: Core/Startup/startup_stm32l475rctx.s.obj
@@ -373,7 +373,7 @@ Core/Startup/startup_stm32l475rctx.obj: Core/Startup/startup_stm32l475rctx.s.obj
 
 # target to build an object file
 Core/Startup/startup_stm32l475rctx.s.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Core/Startup/startup_stm32l475rctx.s.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Startup/startup_stm32l475rctx.s.obj
 .PHONY : Core/Startup/startup_stm32l475rctx.s.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.obj
@@ -381,7 +381,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.obj: Drivers/STM32L4xx_HAL_Driver
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.i
@@ -389,7 +389,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.i: Drivers/STM32L4xx_HAL_Driver/S
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.s
@@ -397,7 +397,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.s: Drivers/STM32L4xx_HAL_Driver/S
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.obj
@@ -405,7 +405,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.i
@@ -413,7 +413,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.s
@@ -421,7 +421,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.obj
@@ -429,7 +429,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.obj: Drivers/STM32L4xx_HAL_Dr
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.i
@@ -437,7 +437,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.i: Drivers/STM32L4xx_HAL_Driv
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.s
@@ -445,7 +445,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.s: Drivers/STM32L4xx_HAL_Driv
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.obj
@@ -453,7 +453,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.i
@@ -461,7 +461,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.s
@@ -469,7 +469,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.obj
@@ -477,7 +477,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.obj: Drivers/STM32L4xx_HAL_D
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.i
@@ -485,7 +485,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.i: Drivers/STM32L4xx_HAL_Dri
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.s
@@ -493,7 +493,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.s: Drivers/STM32L4xx_HAL_Dri
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_exti.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.obj
@@ -501,7 +501,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.obj: Drivers/STM32L4xx_HAL_
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.i
@@ -509,7 +509,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.i: Drivers/STM32L4xx_HAL_Dr
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.s
@@ -517,7 +517,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.s: Drivers/STM32L4xx_HAL_Dr
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.obj
@@ -525,7 +525,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.obj: Drivers/STM32L4xx_H
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.i
@@ -533,7 +533,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.i: Drivers/STM32L4xx_HAL
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.s
@@ -541,7 +541,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.s: Drivers/STM32L4xx_HAL
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.obj
@@ -549,7 +549,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.obj: Drivers/STM32L
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.i
@@ -557,7 +557,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.i: Drivers/STM32L4x
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.s
@@ -565,7 +565,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.s: Drivers/STM32L4x
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.obj
@@ -573,7 +573,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.obj: Drivers/STM32L4xx_HAL_D
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.i
@@ -581,7 +581,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.i: Drivers/STM32L4xx_HAL_Dri
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.s
@@ -589,7 +589,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.s: Drivers/STM32L4xx_HAL_Dri
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.obj
@@ -597,7 +597,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.obj: Drivers/STM32L4xx_HAL_Dr
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.i
@@ -605,7 +605,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.i: Drivers/STM32L4xx_HAL_Driv
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.s
@@ -613,7 +613,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.s: Drivers/STM32L4xx_HAL_Driv
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.obj
@@ -621,7 +621,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.i
@@ -629,7 +629,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.s
@@ -637,7 +637,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.obj
@@ -645,7 +645,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.obj: Drivers/STM32L4xx_HAL_Dr
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.i
@@ -653,7 +653,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.i: Drivers/STM32L4xx_HAL_Driv
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.s
@@ -661,7 +661,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.s: Drivers/STM32L4xx_HAL_Driv
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.obj
@@ -669,7 +669,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.i
@@ -677,7 +677,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.s
@@ -685,7 +685,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pcd_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.obj
@@ -693,7 +693,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.obj: Drivers/STM32L4xx_HAL_Dr
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.i
@@ -701,7 +701,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.i: Drivers/STM32L4xx_HAL_Driv
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.s
@@ -709,7 +709,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.s: Drivers/STM32L4xx_HAL_Driv
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.obj
@@ -717,7 +717,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.i
@@ -725,7 +725,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.s
@@ -733,7 +733,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.obj
@@ -741,7 +741,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.obj: Drivers/STM32L4xx_HAL_D
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.i
@@ -749,7 +749,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.i: Drivers/STM32L4xx_HAL_Dri
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.s
@@ -757,7 +757,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.s: Drivers/STM32L4xx_HAL_Dri
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_qspi.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.obj
@@ -765,7 +765,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.obj: Drivers/STM32L4xx_HAL_Dr
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.i
@@ -773,7 +773,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.i: Drivers/STM32L4xx_HAL_Driv
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.s
@@ -781,7 +781,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.s: Drivers/STM32L4xx_HAL_Driv
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.obj
@@ -789,7 +789,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.i
@@ -797,7 +797,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.s
@@ -805,7 +805,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.obj
@@ -813,7 +813,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.obj: Drivers/STM32L4xx_HAL_Dr
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.i
@@ -821,7 +821,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.i: Drivers/STM32L4xx_HAL_Driv
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.s
@@ -829,7 +829,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.s: Drivers/STM32L4xx_HAL_Driv
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.obj
@@ -837,7 +837,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.i
@@ -845,7 +845,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.s
@@ -853,7 +853,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_spi_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.obj
@@ -861,7 +861,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.obj: Drivers/STM32L4xx_HAL_Dr
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.i
@@ -869,7 +869,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.i: Drivers/STM32L4xx_HAL_Driv
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.s
@@ -877,7 +877,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.s: Drivers/STM32L4xx_HAL_Driv
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.obj
@@ -885,7 +885,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.obj: Drivers/STM32L4xx_HAL
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.i
@@ -893,7 +893,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.i: Drivers/STM32L4xx_HAL_D
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.s
@@ -901,7 +901,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.s: Drivers/STM32L4xx_HAL_D
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c.s
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.obj: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.obj
@@ -909,7 +909,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.obj: Drivers/STM32L4xx_HAL_Dri
 
 # target to build an object file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.obj
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.obj
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.i: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.i
@@ -917,7 +917,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.i: Drivers/STM32L4xx_HAL_Drive
 
 # target to preprocess a source file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.i
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.i
 
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.s: Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.s
@@ -925,7 +925,7 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.s: Drivers/STM32L4xx_HAL_Drive
 
 # target to generate assembly for a file
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.s
 .PHONY : Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_ll_usb.c.s
 
 FATFS/App/fatfs.obj: FATFS/App/fatfs.c.obj
@@ -933,7 +933,7 @@ FATFS/App/fatfs.obj: FATFS/App/fatfs.c.obj
 
 # target to build an object file
 FATFS/App/fatfs.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/FATFS/App/fatfs.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/FATFS/App/fatfs.c.obj
 .PHONY : FATFS/App/fatfs.c.obj
 
 FATFS/App/fatfs.i: FATFS/App/fatfs.c.i
@@ -941,7 +941,7 @@ FATFS/App/fatfs.i: FATFS/App/fatfs.c.i
 
 # target to preprocess a source file
 FATFS/App/fatfs.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/FATFS/App/fatfs.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/FATFS/App/fatfs.c.i
 .PHONY : FATFS/App/fatfs.c.i
 
 FATFS/App/fatfs.s: FATFS/App/fatfs.c.s
@@ -949,7 +949,7 @@ FATFS/App/fatfs.s: FATFS/App/fatfs.c.s
 
 # target to generate assembly for a file
 FATFS/App/fatfs.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/FATFS/App/fatfs.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/FATFS/App/fatfs.c.s
 .PHONY : FATFS/App/fatfs.c.s
 
 FATFS/Target/user_diskio.obj: FATFS/Target/user_diskio.c.obj
@@ -957,7 +957,7 @@ FATFS/Target/user_diskio.obj: FATFS/Target/user_diskio.c.obj
 
 # target to build an object file
 FATFS/Target/user_diskio.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/FATFS/Target/user_diskio.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/FATFS/Target/user_diskio.c.obj
 .PHONY : FATFS/Target/user_diskio.c.obj
 
 FATFS/Target/user_diskio.i: FATFS/Target/user_diskio.c.i
@@ -965,7 +965,7 @@ FATFS/Target/user_diskio.i: FATFS/Target/user_diskio.c.i
 
 # target to preprocess a source file
 FATFS/Target/user_diskio.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/FATFS/Target/user_diskio.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/FATFS/Target/user_diskio.c.i
 .PHONY : FATFS/Target/user_diskio.c.i
 
 FATFS/Target/user_diskio.s: FATFS/Target/user_diskio.c.s
@@ -973,7 +973,7 @@ FATFS/Target/user_diskio.s: FATFS/Target/user_diskio.c.s
 
 # target to generate assembly for a file
 FATFS/Target/user_diskio.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/FATFS/Target/user_diskio.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/FATFS/Target/user_diskio.c.s
 .PHONY : FATFS/Target/user_diskio.c.s
 
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.obj: Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj
@@ -981,7 +981,7 @@ Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.obj: Middlewares/
 
 # target to build an object file
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj
 
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.i: Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i
@@ -989,7 +989,7 @@ Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.i: Middlewares/ST
 
 # target to preprocess a source file
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i
 
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.s: Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s
@@ -997,7 +997,7 @@ Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.s: Middlewares/ST
 
 # target to generate assembly for a file
 Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.obj: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj
@@ -1005,7 +1005,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.obj: Middlewares/ST/S
 
 # target to build an object file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.i: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i
@@ -1013,7 +1013,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.i: Middlewares/ST/STM
 
 # target to preprocess a source file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.s: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s
@@ -1021,7 +1021,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.s: Middlewares/ST/STM
 
 # target to generate assembly for a file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.obj: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj
@@ -1029,7 +1029,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.obj: Middlewares/ST
 
 # target to build an object file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.i: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i
@@ -1037,7 +1037,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.i: Middlewares/ST/S
 
 # target to preprocess a source file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.s: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s
@@ -1045,7 +1045,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.s: Middlewares/ST/S
 
 # target to generate assembly for a file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.obj: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj
@@ -1053,7 +1053,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.obj: Middlewares/ST/
 
 # target to build an object file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.i: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i
@@ -1061,7 +1061,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.i: Middlewares/ST/ST
 
 # target to preprocess a source file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i
 
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.s: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s
@@ -1069,7 +1069,7 @@ Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.s: Middlewares/ST/ST
 
 # target to generate assembly for a file
 Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s
 .PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s
 
 Middlewares/Third_Party/FatFs/src/diskio.obj: Middlewares/Third_Party/FatFs/src/diskio.c.obj
@@ -1077,7 +1077,7 @@ Middlewares/Third_Party/FatFs/src/diskio.obj: Middlewares/Third_Party/FatFs/src/
 
 # target to build an object file
 Middlewares/Third_Party/FatFs/src/diskio.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/diskio.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/diskio.c.obj
 .PHONY : Middlewares/Third_Party/FatFs/src/diskio.c.obj
 
 Middlewares/Third_Party/FatFs/src/diskio.i: Middlewares/Third_Party/FatFs/src/diskio.c.i
@@ -1085,7 +1085,7 @@ Middlewares/Third_Party/FatFs/src/diskio.i: Middlewares/Third_Party/FatFs/src/di
 
 # target to preprocess a source file
 Middlewares/Third_Party/FatFs/src/diskio.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/diskio.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/diskio.c.i
 .PHONY : Middlewares/Third_Party/FatFs/src/diskio.c.i
 
 Middlewares/Third_Party/FatFs/src/diskio.s: Middlewares/Third_Party/FatFs/src/diskio.c.s
@@ -1093,7 +1093,7 @@ Middlewares/Third_Party/FatFs/src/diskio.s: Middlewares/Third_Party/FatFs/src/di
 
 # target to generate assembly for a file
 Middlewares/Third_Party/FatFs/src/diskio.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/diskio.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/diskio.c.s
 .PHONY : Middlewares/Third_Party/FatFs/src/diskio.c.s
 
 Middlewares/Third_Party/FatFs/src/ff.obj: Middlewares/Third_Party/FatFs/src/ff.c.obj
@@ -1101,7 +1101,7 @@ Middlewares/Third_Party/FatFs/src/ff.obj: Middlewares/Third_Party/FatFs/src/ff.c
 
 # target to build an object file
 Middlewares/Third_Party/FatFs/src/ff.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/ff.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/ff.c.obj
 .PHONY : Middlewares/Third_Party/FatFs/src/ff.c.obj
 
 Middlewares/Third_Party/FatFs/src/ff.i: Middlewares/Third_Party/FatFs/src/ff.c.i
@@ -1109,7 +1109,7 @@ Middlewares/Third_Party/FatFs/src/ff.i: Middlewares/Third_Party/FatFs/src/ff.c.i
 
 # target to preprocess a source file
 Middlewares/Third_Party/FatFs/src/ff.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/ff.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/ff.c.i
 .PHONY : Middlewares/Third_Party/FatFs/src/ff.c.i
 
 Middlewares/Third_Party/FatFs/src/ff.s: Middlewares/Third_Party/FatFs/src/ff.c.s
@@ -1117,7 +1117,7 @@ Middlewares/Third_Party/FatFs/src/ff.s: Middlewares/Third_Party/FatFs/src/ff.c.s
 
 # target to generate assembly for a file
 Middlewares/Third_Party/FatFs/src/ff.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/ff.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/ff.c.s
 .PHONY : Middlewares/Third_Party/FatFs/src/ff.c.s
 
 Middlewares/Third_Party/FatFs/src/ff_gen_drv.obj: Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.obj
@@ -1125,7 +1125,7 @@ Middlewares/Third_Party/FatFs/src/ff_gen_drv.obj: Middlewares/Third_Party/FatFs/
 
 # target to build an object file
 Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.obj
 .PHONY : Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.obj
 
 Middlewares/Third_Party/FatFs/src/ff_gen_drv.i: Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.i
@@ -1133,7 +1133,7 @@ Middlewares/Third_Party/FatFs/src/ff_gen_drv.i: Middlewares/Third_Party/FatFs/sr
 
 # target to preprocess a source file
 Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.i
 .PHONY : Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.i
 
 Middlewares/Third_Party/FatFs/src/ff_gen_drv.s: Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.s
@@ -1141,7 +1141,7 @@ Middlewares/Third_Party/FatFs/src/ff_gen_drv.s: Middlewares/Third_Party/FatFs/sr
 
 # target to generate assembly for a file
 Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.s
 .PHONY : Middlewares/Third_Party/FatFs/src/ff_gen_drv.c.s
 
 Middlewares/Third_Party/FatFs/src/option/syscall.obj: Middlewares/Third_Party/FatFs/src/option/syscall.c.obj
@@ -1149,7 +1149,7 @@ Middlewares/Third_Party/FatFs/src/option/syscall.obj: Middlewares/Third_Party/Fa
 
 # target to build an object file
 Middlewares/Third_Party/FatFs/src/option/syscall.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/option/syscall.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/option/syscall.c.obj
 .PHONY : Middlewares/Third_Party/FatFs/src/option/syscall.c.obj
 
 Middlewares/Third_Party/FatFs/src/option/syscall.i: Middlewares/Third_Party/FatFs/src/option/syscall.c.i
@@ -1157,7 +1157,7 @@ Middlewares/Third_Party/FatFs/src/option/syscall.i: Middlewares/Third_Party/FatF
 
 # target to preprocess a source file
 Middlewares/Third_Party/FatFs/src/option/syscall.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/option/syscall.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/option/syscall.c.i
 .PHONY : Middlewares/Third_Party/FatFs/src/option/syscall.c.i
 
 Middlewares/Third_Party/FatFs/src/option/syscall.s: Middlewares/Third_Party/FatFs/src/option/syscall.c.s
@@ -1165,7 +1165,7 @@ Middlewares/Third_Party/FatFs/src/option/syscall.s: Middlewares/Third_Party/FatF
 
 # target to generate assembly for a file
 Middlewares/Third_Party/FatFs/src/option/syscall.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/Middlewares/Third_Party/FatFs/src/option/syscall.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/option/syscall.c.s
 .PHONY : Middlewares/Third_Party/FatFs/src/option/syscall.c.s
 
 USB_DEVICE/App/usb_device.obj: USB_DEVICE/App/usb_device.c.obj
@@ -1173,7 +1173,7 @@ USB_DEVICE/App/usb_device.obj: USB_DEVICE/App/usb_device.c.obj
 
 # target to build an object file
 USB_DEVICE/App/usb_device.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usb_device.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usb_device.c.obj
 .PHONY : USB_DEVICE/App/usb_device.c.obj
 
 USB_DEVICE/App/usb_device.i: USB_DEVICE/App/usb_device.c.i
@@ -1181,7 +1181,7 @@ USB_DEVICE/App/usb_device.i: USB_DEVICE/App/usb_device.c.i
 
 # target to preprocess a source file
 USB_DEVICE/App/usb_device.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usb_device.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usb_device.c.i
 .PHONY : USB_DEVICE/App/usb_device.c.i
 
 USB_DEVICE/App/usb_device.s: USB_DEVICE/App/usb_device.c.s
@@ -1189,7 +1189,7 @@ USB_DEVICE/App/usb_device.s: USB_DEVICE/App/usb_device.c.s
 
 # target to generate assembly for a file
 USB_DEVICE/App/usb_device.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usb_device.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usb_device.c.s
 .PHONY : USB_DEVICE/App/usb_device.c.s
 
 USB_DEVICE/App/usbd_cdc_if.obj: USB_DEVICE/App/usbd_cdc_if.c.obj
@@ -1197,7 +1197,7 @@ USB_DEVICE/App/usbd_cdc_if.obj: USB_DEVICE/App/usbd_cdc_if.c.obj
 
 # target to build an object file
 USB_DEVICE/App/usbd_cdc_if.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.obj
 .PHONY : USB_DEVICE/App/usbd_cdc_if.c.obj
 
 USB_DEVICE/App/usbd_cdc_if.i: USB_DEVICE/App/usbd_cdc_if.c.i
@@ -1205,7 +1205,7 @@ USB_DEVICE/App/usbd_cdc_if.i: USB_DEVICE/App/usbd_cdc_if.c.i
 
 # target to preprocess a source file
 USB_DEVICE/App/usbd_cdc_if.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.i
 .PHONY : USB_DEVICE/App/usbd_cdc_if.c.i
 
 USB_DEVICE/App/usbd_cdc_if.s: USB_DEVICE/App/usbd_cdc_if.c.s
@@ -1213,7 +1213,7 @@ USB_DEVICE/App/usbd_cdc_if.s: USB_DEVICE/App/usbd_cdc_if.c.s
 
 # target to generate assembly for a file
 USB_DEVICE/App/usbd_cdc_if.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.s
 .PHONY : USB_DEVICE/App/usbd_cdc_if.c.s
 
 USB_DEVICE/App/usbd_desc.obj: USB_DEVICE/App/usbd_desc.c.obj
@@ -1221,7 +1221,7 @@ USB_DEVICE/App/usbd_desc.obj: USB_DEVICE/App/usbd_desc.c.obj
 
 # target to build an object file
 USB_DEVICE/App/usbd_desc.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usbd_desc.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_desc.c.obj
 .PHONY : USB_DEVICE/App/usbd_desc.c.obj
 
 USB_DEVICE/App/usbd_desc.i: USB_DEVICE/App/usbd_desc.c.i
@@ -1229,7 +1229,7 @@ USB_DEVICE/App/usbd_desc.i: USB_DEVICE/App/usbd_desc.c.i
 
 # target to preprocess a source file
 USB_DEVICE/App/usbd_desc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usbd_desc.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_desc.c.i
 .PHONY : USB_DEVICE/App/usbd_desc.c.i
 
 USB_DEVICE/App/usbd_desc.s: USB_DEVICE/App/usbd_desc.c.s
@@ -1237,7 +1237,7 @@ USB_DEVICE/App/usbd_desc.s: USB_DEVICE/App/usbd_desc.c.s
 
 # target to generate assembly for a file
 USB_DEVICE/App/usbd_desc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/App/usbd_desc.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_desc.c.s
 .PHONY : USB_DEVICE/App/usbd_desc.c.s
 
 USB_DEVICE/Target/usbd_conf.obj: USB_DEVICE/Target/usbd_conf.c.obj
@@ -1245,7 +1245,7 @@ USB_DEVICE/Target/usbd_conf.obj: USB_DEVICE/Target/usbd_conf.c.obj
 
 # target to build an object file
 USB_DEVICE/Target/usbd_conf.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/Target/usbd_conf.c.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/Target/usbd_conf.c.obj
 .PHONY : USB_DEVICE/Target/usbd_conf.c.obj
 
 USB_DEVICE/Target/usbd_conf.i: USB_DEVICE/Target/usbd_conf.c.i
@@ -1253,7 +1253,7 @@ USB_DEVICE/Target/usbd_conf.i: USB_DEVICE/Target/usbd_conf.c.i
 
 # target to preprocess a source file
 USB_DEVICE/Target/usbd_conf.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/Target/usbd_conf.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/Target/usbd_conf.c.i
 .PHONY : USB_DEVICE/Target/usbd_conf.c.i
 
 USB_DEVICE/Target/usbd_conf.s: USB_DEVICE/Target/usbd_conf.c.s
@@ -1261,7 +1261,7 @@ USB_DEVICE/Target/usbd_conf.s: USB_DEVICE/Target/usbd_conf.c.s
 
 # target to generate assembly for a file
 USB_DEVICE/Target/usbd_conf.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-tesbench.elf.dir\build.make CMakeFiles/rp-tesbench.elf.dir/USB_DEVICE/Target/usbd_conf.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/Target/usbd_conf.c.s
 .PHONY : USB_DEVICE/Target/usbd_conf.c.s
 
 # Help Target
@@ -1272,7 +1272,7 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... rp-tesbench.elf
+	@echo ... rp-firmware.elf
 	@echo ... Core/Src/COMInterface.obj
 	@echo ... Core/Src/COMInterface.i
 	@echo ... Core/Src/COMInterface.s

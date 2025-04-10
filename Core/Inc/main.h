@@ -31,7 +31,17 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+typedef struct  __attribute__((packed)) {
+	void* args;
+	uint32_t result;
+	uint16_t command;
+} SystemCallData;
 
+
+void (*COPY_ISR) (uint16_t length) = NULL;
+char* COPY_BUF = NULL;
+
+extern SystemCallData systemCallData;
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

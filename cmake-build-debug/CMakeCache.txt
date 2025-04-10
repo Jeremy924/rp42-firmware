@@ -126,7 +126,7 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench/cmake-build-debug/CMakeFiles/pkgRedirects
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/rp-tesbench
+CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/rp-firmware
 
 //Path to a program.
 CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-ld.exe
@@ -164,7 +164,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=rp-tesbench
+CMAKE_PROJECT_NAME:STATIC=rp-firmware
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-ranlib.exe
@@ -259,13 +259,13 @@ ProcessorCount_cmd_sysinfo:FILEPATH=ProcessorCount_cmd_sysinfo-NOTFOUND
 ProcessorCount_cmd_uname:FILEPATH=ProcessorCount_cmd_uname-NOTFOUND
 
 //Value Computed by CMake
-rp-tesbench_BINARY_DIR:STATIC=C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench/cmake-build-debug
+rp-firmware_BINARY_DIR:STATIC=C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench/cmake-build-debug
 
 //Value Computed by CMake
-rp-tesbench_IS_TOP_LEVEL:STATIC=ON
+rp-firmware_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-rp-tesbench_SOURCE_DIR:STATIC=C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench
+rp-firmware_SOURCE_DIR:STATIC=C:/Users/Jerem/OneDrive/Documents/career/my_projects/stm-workspace/rp-tesbench
 
 
 ########################

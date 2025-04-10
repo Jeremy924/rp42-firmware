@@ -146,7 +146,12 @@ void SVC_Handler(void)
   /* USER CODE BEGIN SVCall_IRQn 0 */
 
   /* USER CODE END SVCall_IRQn 0 */
-  /* USER CODE BEGIN SVCall_IRQn 1 */
+
+
+	systemCallData.result = system_call(systemCallData.command, systemCallData.args);
+
+
+	/* USER CODE BEGIN SVCall_IRQn 1 */
 
   /* USER CODE END SVCall_IRQn 1 */
 }

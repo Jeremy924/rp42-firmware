@@ -21,13 +21,13 @@
 #include "fatfs.h"
 #include "quadspi.h"
 #include "spi.h"
+#include "tim.h"
 #include "usb_device.h"
 #include "gpio.h"
 
-#include <stdbool.h>
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdbool.h"
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx.h"
 #include "stm32l475xx.h"
@@ -35,7 +35,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-TIM_HandleTypeDef htim16;
 
 /* USER CODE END PTD */
 
@@ -57,11 +56,13 @@ uint32_t system_call(uint16_t command, void* args);
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define KEY_QUEUE_SIZE 5
-uint8_t key_queue[KEY_QUEUE_SIZE] = {255, 255, 255, 255, 255};
+unsigned int KEY_QUEUE_SIZE = 5;
+uint8_t* key_queue;
 //uint32_t test[1000];
 uint8_t kqri = 0;
 uint8_t kqwi = 0;
+
+bool has_started = false;
 
 SystemCallData __attribute__((section(".SYS_CALL_DATA"))) systemCallData;
 
@@ -70,7 +71,6 @@ SystemCallData __attribute__((section(".SYS_CALL_DATA"))) systemCallData;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_TIM16_Init(void);
 /* USER CODE BEGIN PFP */
 
 void reinitialize_qspi() {
@@ -109,16 +109,17 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  HAL_NVIC_SetPriority(SVCall_IRQn, 15, 0);
+
+  key_queue = (uint8_t*) malloc(sizeof(uint8_t) * KEY_QUEUE_SIZE);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
 
-
-  MX_QUADSPI_Init();
+  /* USER CODE BEGIN 2 */
 
   code = bootloader();
-  /* USER CODE BEGIN 2 */
+
   if (code == 2) {
 	  __set_PSP(malloc(1000));
 	  __asm("MRS R0, CONTROL");
@@ -138,52 +139,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  MX_TIM16_Init();
-
 	  run_console();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
-}
-
-
-/**
-  * @brief TIM16 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM16_Init(void)
-{
-
-  /* USER CODE BEGIN TIM16_Init 0 */
-
-  /* USER CODE END TIM16_Init 0 */
-
-  /* USER CODE BEGIN TIM16_Init 1 */
-
-  /* USER CODE END TIM16_Init 1 */
-  htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 249;
-  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 49;
-  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim16.Init.RepetitionCounter = 0;
-  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_TIM_OnePulse_Init(&htim16, TIM_OPMODE_SINGLE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM16_Init 2 */
-  HAL_TIM_Base_Start_IT(&htim16);
-
-  /* USER CODE END TIM16_Init 2 */
-
 }
 
 /**
@@ -212,7 +173,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 32;
+  RCC_OscInitStruct.PLL.PLLN = 30;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
@@ -227,8 +188,8 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
@@ -236,12 +197,13 @@ void SystemClock_Config(void)
   }
 }
 
-
 /* USER CODE BEGIN 4 */
 
 int bootloader() {
 	__HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
 	__HAL_FLASH_DATA_CACHE_ENABLE();
+
+	  MX_GPIO_Init();
 
 	SCB->SHCSR |= 0x70000;
 
@@ -253,12 +215,12 @@ int bootloader() {
 
 	  int code = Scan_Keyboard();
 
+	  MX_TIM16_Init();
 	  MX_QUADSPI_Init();
 	  MX_SPI3_Init();
 
 	  MX_USB_DEVICE_Init();
 	  MX_FATFS_Init();
-	  MX_TIM16_Init();
 
 	  if (code != 1 && code != 2) {
 		  CSP_QSPI_EnableMemoryMappedMode();
@@ -283,19 +245,18 @@ int bootloader() {
 			  __DSB();
 			  __ISB();
 
+			has_started = true;
 			jumpToApp();
 	  }
+		has_started = true;
 
 	  return code;
 }
 
-uint8_t powered_down = 0;
-uint8_t last = 0;
-uint8_t last_down = 0;
-uint32_t last_time = 0;
-#define debounce_time 50
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+	if (!has_started) return;
+
 	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 	HAL_NVIC_DisableIRQ(EXTI1_IRQn);
 	HAL_NVIC_DisableIRQ(EXTI2_IRQn);
@@ -304,53 +265,42 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
 
-	  HAL_TIM_Base_Start_IT(&htim16);
-
 	uint8_t key = GetKey(GPIO_Pin);
 
-	//if (key != 255 && uwTick - last_time > 50) {
-	//	if (key != 255) last_time = uwTick;
-		//last = key;
-		//if (key != 255) last_down = key;
-		//last_time = HAL_GetTick();
 
+		// if the queue is full, then attempt to increase its size
+		if ((kqwi == (KEY_QUEUE_SIZE - 1) && (kqri == 0)) || (kqwi == (kqri - 1))) {
+			// use constant increments since it should almost never expand
+			uint8_t* new_queue = malloc(sizeof(uint8_t) * (KEY_QUEUE_SIZE + 3));
+
+			// if its out of memory, then just overwrite the current queue
+			if (new_queue != NULL) {
+				// copy items over to new queue starting at index 0 in the new queue
+				unsigned int new_kqri = 0;
+				while (kqri != kqwi) {
+					new_queue[new_kqri++] = key_queue[kqri++];
+					if (kqri == KEY_QUEUE_SIZE) kqri = 0;
+				}
+				kqri = 0; // queue is filled with items that have not yet been read
+				kqwi = KEY_QUEUE_SIZE; // next index to write is the max size of the old queue
+				KEY_QUEUE_SIZE += 3; // increase its size by 3
+
+				free(key_queue);
+
+				key_queue = new_queue;
+			} else {
+				// If it can't resize then just overwrite
+			}
+		}
 
 		key_queue[kqwi++] = key;
 		if (kqwi == KEY_QUEUE_SIZE) kqwi = 0;
-	//}
-		  HAL_TIM_Base_Start_IT(&htim16);
 
 
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
 
-			HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+		HAL_TIM_Base_Start_IT(&htim16);
 }
 
-void debounce_time_up() {
-	  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
-	  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
-	  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
-	  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
-	  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
-	  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
-
-		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-		HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-		HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-		HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-		HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-		HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-}
 
 void Powerdown() {
 }
@@ -564,6 +514,26 @@ uint8_t GetKey(uint16_t pin)
 	  //EXTI->IMR1 |= (COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
 
 	return key_press;
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
+	if (htim->Instance == TIM16) {
+		HAL_TIM_Base_Stop_IT(&htim16);
+
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
+
+			HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+	}
 }
 
 /**

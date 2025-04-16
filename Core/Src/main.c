@@ -35,6 +35,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+TIM_HandleTypeDef htim16;
 
 /* USER CODE END PTD */
 
@@ -69,6 +70,7 @@ SystemCallData __attribute__((section(".SYS_CALL_DATA"))) systemCallData;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_TIM16_Init(void);
 /* USER CODE BEGIN PFP */
 
 void reinitialize_qspi() {
@@ -136,12 +138,52 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  MX_TIM16_Init();
+
 	  run_console();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+
+
+/**
+  * @brief TIM16 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM16_Init(void)
+{
+
+  /* USER CODE BEGIN TIM16_Init 0 */
+
+  /* USER CODE END TIM16_Init 0 */
+
+  /* USER CODE BEGIN TIM16_Init 1 */
+
+  /* USER CODE END TIM16_Init 1 */
+  htim16.Instance = TIM16;
+  htim16.Init.Prescaler = 249;
+  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim16.Init.Period = 49;
+  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim16.Init.RepetitionCounter = 0;
+  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_OnePulse_Init(&htim16, TIM_OPMODE_SINGLE) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM16_Init 2 */
+  HAL_TIM_Base_Start_IT(&htim16);
+
+  /* USER CODE END TIM16_Init 2 */
+
 }
 
 /**
@@ -170,7 +212,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 40;
+  RCC_OscInitStruct.PLL.PLLN = 32;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
@@ -184,20 +226,21 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV2;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV16;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV16;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
 }
 
+
 /* USER CODE BEGIN 4 */
 
 int bootloader() {
-	__HAL_FLASH_INSTRUCTION_CACHE_ENABLE();
+	__HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
 	__HAL_FLASH_DATA_CACHE_ENABLE();
 
 	SCB->SHCSR |= 0x70000;
@@ -215,6 +258,7 @@ int bootloader() {
 
 	  MX_USB_DEVICE_Init();
 	  MX_FATFS_Init();
+	  MX_TIM16_Init();
 
 	  if (code != 1 && code != 2) {
 		  CSP_QSPI_EnableMemoryMappedMode();
@@ -252,7 +296,6 @@ uint32_t last_time = 0;
 #define debounce_time 50
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-
 	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 	HAL_NVIC_DisableIRQ(EXTI1_IRQn);
 	HAL_NVIC_DisableIRQ(EXTI2_IRQn);
@@ -261,30 +304,52 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
 
+	  HAL_TIM_Base_Start_IT(&htim16);
+
 	uint8_t key = GetKey(GPIO_Pin);
 
+	//if (key != 255 && uwTick - last_time > 50) {
+	//	if (key != 255) last_time = uwTick;
+		//last = key;
+		//if (key != 255) last_down = key;
+		//last_time = HAL_GetTick();
 
-	//last = key;
-	//if (key != 255) last_down = key;
-	//last_time = HAL_GetTick();
+
+		key_queue[kqwi++] = key;
+		if (kqwi == KEY_QUEUE_SIZE) kqwi = 0;
+	//}
+		  HAL_TIM_Base_Start_IT(&htim16);
 
 
-	key_queue[kqwi++] = key;
-	if (kqwi == KEY_QUEUE_SIZE) kqwi = 0;
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
+		  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
 
-  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
-  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
-  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
-  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
-  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
-  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
+			HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+			HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+}
 
-	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-	HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-	HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-	HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+void debounce_time_up() {
+	  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
+	  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
+	  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
+	  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
+	  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
+	  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
+
+		HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+		HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+		HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+		HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+		HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+		HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 void Powerdown() {
@@ -336,13 +401,7 @@ uint32_t system_call(uint16_t command, void* args) {
 	case NOP:
 		return *(uint32_t*) args;
 	case GET_KEY:
-		if (TEMP_count++ < 5)
-			return 19;//key_queue[kqri];
-		if (TEMP_count < 10)
-			return 17;
-
-		TEMP_count = 0;
-		return 13;
+		return key_queue[kqri];
 		//return (uint32_t) Scan_Keyboard();
 	case WA_KEY:
 
@@ -425,10 +484,10 @@ uint32_t system_call(uint16_t command, void* args) {
 		return_value = system_status;
 		break;
 	case SET_COPY_ISR:
-		COPY_ISR = (void (*)(void *)) args;
+		//COPY_ISR = (void (*)(void *)) args;
 		break;
 	case RM_COPY_ISR:
-		COPY_ISR = NULL;
+		//COPY_ISR = NULL;
 		break;
 	case PASTE_TO_PC:
 		break;

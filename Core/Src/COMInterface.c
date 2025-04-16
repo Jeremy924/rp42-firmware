@@ -12,6 +12,7 @@
 uint32_t ReadFill(char* buf, uint32_t capacity);
 
 _Noreturn void run_console() {
+
 #define MAIN_MENU 0
 #define FLASH_MENU 1
 #define HAL_MENU 2

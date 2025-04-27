@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "usbd_cdc_if.h"
+//#include "usbd_cdc_if.h"
 
 #define WRITE_COM(message) CDC_Transmit_FS(message, sizeof(message))
 

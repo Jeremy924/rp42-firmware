@@ -368,6 +368,54 @@ Core/Src/system_stm32l4xx.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/system_stm32l4xx.c.s
 .PHONY : Core/Src/system_stm32l4xx.c.s
 
+Core/Src/tim.obj: Core/Src/tim.c.obj
+.PHONY : Core/Src/tim.obj
+
+# target to build an object file
+Core/Src/tim.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/tim.c.obj
+.PHONY : Core/Src/tim.c.obj
+
+Core/Src/tim.i: Core/Src/tim.c.i
+.PHONY : Core/Src/tim.i
+
+# target to preprocess a source file
+Core/Src/tim.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/tim.c.i
+.PHONY : Core/Src/tim.c.i
+
+Core/Src/tim.s: Core/Src/tim.c.s
+.PHONY : Core/Src/tim.s
+
+# target to generate assembly for a file
+Core/Src/tim.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/tim.c.s
+.PHONY : Core/Src/tim.c.s
+
+Core/Src/usb_otg.obj: Core/Src/usb_otg.c.obj
+.PHONY : Core/Src/usb_otg.obj
+
+# target to build an object file
+Core/Src/usb_otg.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/usb_otg.c.obj
+.PHONY : Core/Src/usb_otg.c.obj
+
+Core/Src/usb_otg.i: Core/Src/usb_otg.c.i
+.PHONY : Core/Src/usb_otg.i
+
+# target to preprocess a source file
+Core/Src/usb_otg.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/usb_otg.c.i
+.PHONY : Core/Src/usb_otg.c.i
+
+Core/Src/usb_otg.s: Core/Src/usb_otg.c.s
+.PHONY : Core/Src/usb_otg.s
+
+# target to generate assembly for a file
+Core/Src/usb_otg.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Core/Src/usb_otg.c.s
+.PHONY : Core/Src/usb_otg.c.s
+
 Core/Startup/startup_stm32l475rctx.obj: Core/Startup/startup_stm32l475rctx.s.obj
 .PHONY : Core/Startup/startup_stm32l475rctx.obj
 
@@ -976,101 +1024,365 @@ FATFS/Target/user_diskio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/FATFS/Target/user_diskio.c.s
 .PHONY : FATFS/Target/user_diskio.c.s
 
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.obj: Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.obj
 
 # target to build an object file
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.obj
 
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.i: Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.i
 
 # target to preprocess a source file
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.i
 
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.s: Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.s
 
 # target to generate assembly for a file
-Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.c.s
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.obj: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.obj
 
 # target to build an object file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.obj
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.i: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.i
 
 # target to preprocess a source file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.i
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.s: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.s
 
 # target to generate assembly for a file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.c.s
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.obj: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.obj
 
 # target to build an object file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.obj
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.i: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.i
 
 # target to preprocess a source file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.i
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.s: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.s
 
 # target to generate assembly for a file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.c.s
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.obj: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.obj
 
 # target to build an object file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.obj
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.obj
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.i: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.i
 
 # target to preprocess a source file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.i
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.i
 
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.s: Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.s
 
 # target to generate assembly for a file
-Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s
-.PHONY : Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c.s
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.c.s
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.obj: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.obj
+
+# target to build an object file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.obj
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.obj
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.i: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.i
+
+# target to preprocess a source file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.i
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.i
+
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.s: Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.s
+
+# target to generate assembly for a file
+Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.s
+.PHONY : Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.c.s
 
 Middlewares/Third_Party/FatFs/src/diskio.obj: Middlewares/Third_Party/FatFs/src/diskio.c.obj
 .PHONY : Middlewares/Third_Party/FatFs/src/diskio.obj
@@ -1168,102 +1480,6 @@ Middlewares/Third_Party/FatFs/src/option/syscall.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/Middlewares/Third_Party/FatFs/src/option/syscall.c.s
 .PHONY : Middlewares/Third_Party/FatFs/src/option/syscall.c.s
 
-USB_DEVICE/App/usb_device.obj: USB_DEVICE/App/usb_device.c.obj
-.PHONY : USB_DEVICE/App/usb_device.obj
-
-# target to build an object file
-USB_DEVICE/App/usb_device.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usb_device.c.obj
-.PHONY : USB_DEVICE/App/usb_device.c.obj
-
-USB_DEVICE/App/usb_device.i: USB_DEVICE/App/usb_device.c.i
-.PHONY : USB_DEVICE/App/usb_device.i
-
-# target to preprocess a source file
-USB_DEVICE/App/usb_device.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usb_device.c.i
-.PHONY : USB_DEVICE/App/usb_device.c.i
-
-USB_DEVICE/App/usb_device.s: USB_DEVICE/App/usb_device.c.s
-.PHONY : USB_DEVICE/App/usb_device.s
-
-# target to generate assembly for a file
-USB_DEVICE/App/usb_device.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usb_device.c.s
-.PHONY : USB_DEVICE/App/usb_device.c.s
-
-USB_DEVICE/App/usbd_cdc_if.obj: USB_DEVICE/App/usbd_cdc_if.c.obj
-.PHONY : USB_DEVICE/App/usbd_cdc_if.obj
-
-# target to build an object file
-USB_DEVICE/App/usbd_cdc_if.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.obj
-.PHONY : USB_DEVICE/App/usbd_cdc_if.c.obj
-
-USB_DEVICE/App/usbd_cdc_if.i: USB_DEVICE/App/usbd_cdc_if.c.i
-.PHONY : USB_DEVICE/App/usbd_cdc_if.i
-
-# target to preprocess a source file
-USB_DEVICE/App/usbd_cdc_if.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.i
-.PHONY : USB_DEVICE/App/usbd_cdc_if.c.i
-
-USB_DEVICE/App/usbd_cdc_if.s: USB_DEVICE/App/usbd_cdc_if.c.s
-.PHONY : USB_DEVICE/App/usbd_cdc_if.s
-
-# target to generate assembly for a file
-USB_DEVICE/App/usbd_cdc_if.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_cdc_if.c.s
-.PHONY : USB_DEVICE/App/usbd_cdc_if.c.s
-
-USB_DEVICE/App/usbd_desc.obj: USB_DEVICE/App/usbd_desc.c.obj
-.PHONY : USB_DEVICE/App/usbd_desc.obj
-
-# target to build an object file
-USB_DEVICE/App/usbd_desc.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_desc.c.obj
-.PHONY : USB_DEVICE/App/usbd_desc.c.obj
-
-USB_DEVICE/App/usbd_desc.i: USB_DEVICE/App/usbd_desc.c.i
-.PHONY : USB_DEVICE/App/usbd_desc.i
-
-# target to preprocess a source file
-USB_DEVICE/App/usbd_desc.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_desc.c.i
-.PHONY : USB_DEVICE/App/usbd_desc.c.i
-
-USB_DEVICE/App/usbd_desc.s: USB_DEVICE/App/usbd_desc.c.s
-.PHONY : USB_DEVICE/App/usbd_desc.s
-
-# target to generate assembly for a file
-USB_DEVICE/App/usbd_desc.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/App/usbd_desc.c.s
-.PHONY : USB_DEVICE/App/usbd_desc.c.s
-
-USB_DEVICE/Target/usbd_conf.obj: USB_DEVICE/Target/usbd_conf.c.obj
-.PHONY : USB_DEVICE/Target/usbd_conf.obj
-
-# target to build an object file
-USB_DEVICE/Target/usbd_conf.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/Target/usbd_conf.c.obj
-.PHONY : USB_DEVICE/Target/usbd_conf.c.obj
-
-USB_DEVICE/Target/usbd_conf.i: USB_DEVICE/Target/usbd_conf.c.i
-.PHONY : USB_DEVICE/Target/usbd_conf.i
-
-# target to preprocess a source file
-USB_DEVICE/Target/usbd_conf.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/Target/usbd_conf.c.i
-.PHONY : USB_DEVICE/Target/usbd_conf.c.i
-
-USB_DEVICE/Target/usbd_conf.s: USB_DEVICE/Target/usbd_conf.c.s
-.PHONY : USB_DEVICE/Target/usbd_conf.s
-
-# target to generate assembly for a file
-USB_DEVICE/Target/usbd_conf.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\rp-firmware.elf.dir\build.make CMakeFiles/rp-firmware.elf.dir/USB_DEVICE/Target/usbd_conf.c.s
-.PHONY : USB_DEVICE/Target/usbd_conf.c.s
-
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -1303,6 +1519,12 @@ help:
 	@echo ... Core/Src/system_stm32l4xx.obj
 	@echo ... Core/Src/system_stm32l4xx.i
 	@echo ... Core/Src/system_stm32l4xx.s
+	@echo ... Core/Src/tim.obj
+	@echo ... Core/Src/tim.i
+	@echo ... Core/Src/tim.s
+	@echo ... Core/Src/usb_otg.obj
+	@echo ... Core/Src/usb_otg.i
+	@echo ... Core/Src/usb_otg.s
 	@echo ... Core/Startup/startup_stm32l475rctx.obj
 	@echo ... Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.obj
 	@echo ... Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.i
@@ -1379,18 +1601,51 @@ help:
 	@echo ... FATFS/Target/user_diskio.obj
 	@echo ... FATFS/Target/user_diskio.i
 	@echo ... FATFS/Target/user_diskio.s
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.obj
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.i
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.s
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.obj
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.i
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.s
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.obj
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.i
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.s
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.obj
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.i
-	@echo ... Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usb_device.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_cdc_acm_if.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_desc.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/App/usbd_msc_if.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/CDC_ACM/Src/usbd_cdc_acm.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/COMPOSITE/Src/usbd_composite.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/HID_KEYBOARD/Src/usbd_hid_keyboard.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_bot.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_data.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Class/MSC/Src/usbd_msc_scsi.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_core.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ctlreq.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Core/Src/usbd_ioreq.s
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.obj
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.i
+	@echo ... Middlewares/Third_Party/AL94_USB_Composite/COMPOSITE/Target/usbd_conf.s
 	@echo ... Middlewares/Third_Party/FatFs/src/diskio.obj
 	@echo ... Middlewares/Third_Party/FatFs/src/diskio.i
 	@echo ... Middlewares/Third_Party/FatFs/src/diskio.s
@@ -1403,18 +1658,6 @@ help:
 	@echo ... Middlewares/Third_Party/FatFs/src/option/syscall.obj
 	@echo ... Middlewares/Third_Party/FatFs/src/option/syscall.i
 	@echo ... Middlewares/Third_Party/FatFs/src/option/syscall.s
-	@echo ... USB_DEVICE/App/usb_device.obj
-	@echo ... USB_DEVICE/App/usb_device.i
-	@echo ... USB_DEVICE/App/usb_device.s
-	@echo ... USB_DEVICE/App/usbd_cdc_if.obj
-	@echo ... USB_DEVICE/App/usbd_cdc_if.i
-	@echo ... USB_DEVICE/App/usbd_cdc_if.s
-	@echo ... USB_DEVICE/App/usbd_desc.obj
-	@echo ... USB_DEVICE/App/usbd_desc.i
-	@echo ... USB_DEVICE/App/usbd_desc.s
-	@echo ... USB_DEVICE/Target/usbd_conf.obj
-	@echo ... USB_DEVICE/Target/usbd_conf.i
-	@echo ... USB_DEVICE/Target/usbd_conf.s
 .PHONY : help
 
 

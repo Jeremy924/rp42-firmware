@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include "n25q128a.h"
 #include "quadspi.h"
-#include "usbd_cdc_if.h"
+//#include "usbd_cdc_if.h"
+#include "usbd_cdc_acm_if.h"
 
 
 uint32_t ReadFill(char* buf, uint32_t capacity);
@@ -52,9 +53,9 @@ _Noreturn void run_console() {
 				WriteString("\033[32mFlash Read/Write Tool\033[0m\nfrw>");
 				current_menu = FLASH_MENU;
 			} else if (strcmp("echo off", command) == 0) {
-				COM_STATUS &= ~ECHO;
+				//COM_STATUS &= ~ECHO;
 			} else if (strcmp("echo on", command) == 0) {
-				COM_STATUS |= ECHO;
+				//COM_STATUS |= ECHO;
 			} else if (strcmp("sudo hal-config", command) == 0) {
 				current_menu = HAL_MENU;
 			//} else if (strcmp("whereami", command) == 0) {
@@ -278,7 +279,8 @@ _Noreturn void run_console() {
 					sprintf(num_parse, "%d", (int) status);
 					_WriteString(num_parse, 1);
 				} else {
-					CDC_Transmit_FS(buf, read_size);
+					//CDC_Transmit_FS(buf, read_size);
+					CDC_Transmit(0, buf, read_size);
 				}
 				WriteString("\nfrw>");
 
@@ -547,7 +549,7 @@ _Noreturn void run_console() {
 
                     CSP_QSPI_Read(read_back_buf, i * N25Q128A_PAGE_SIZE, N25Q128A_PAGE_SIZE);
 
-                    CDC_Transmit_FS(program_buf, N25Q128A_PAGE_SIZE);
+                    //CDC_Transmit_FS(program_buf, N25Q128A_PAGE_SIZE);
 
                     program_address += N25Q128A_PAGE_SIZE;
                 }
@@ -627,7 +629,7 @@ uint32_t ReadFill(char* buf, uint32_t capacity) {
  * A null character will be placed at the end of the string.
  */
 uint32_t Read(char* buf, uint32_t capacity) {
-    if (capacity == 0) return 0;
+	if (capacity == 0) return 0;
     if (com_read_ptr == com_write_ptr) return 0;
 
 
@@ -660,8 +662,8 @@ uint32_t Read(char* buf, uint32_t capacity) {
     return size;
 }
 void WriteBuf(char* buf, unsigned int len, uint8_t important) {
-	if (important == 0 && (COM_STATUS&&ECHO) == 0) return;
-	CDC_Transmit_FS(buf, len);
+	//if (important == 0 && (COM_STATUS&&ECHO) == 0) return;
+	CDC_Transmit(0, buf, len);
 }
 
 void _WriteString(char* buf, uint8_t important) {

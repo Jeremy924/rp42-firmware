@@ -22,7 +22,7 @@
 #include "quadspi.h"
 #include "spi.h"
 #include "tim.h"
-#include "usb_device.h"
+#include "usb_otg.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -31,6 +31,10 @@
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx.h"
 #include "stm32l475xx.h"
+#include "usb_device.h"
+#include "usbd_hid_keyboard.h"
+#include "keyboardUtils.h"
+#include "FatFSTest.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -40,10 +44,38 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+/**
+ * Scans keyboard to find if key is currently being pressed. This function will temporarily
+ * disable keyboard interrupts while scanning.
+ *
+ * Returns a number from 1 to 37 representing the key currently being pressed, or 255 if no key is being pressed
+ */
 uint8_t Scan_Keyboard(void);
+
+/**
+ * A function to test the buttons and screen. This function will never return
+ */
 void Basic_Hardware_Test();
+
+/**
+ * Determines which button in the row is being pressed given the row containing the button being pressed.
+ * If the incorrect row is given, the the incorrect button will be retruned
+ *
+ * Parameter pin: pin corresponding row with key being pressed
+ * Returns a number from 1 to 37 representing the key being pressed, or 255 if no key is being pressed
+ */
 uint8_t GetKey(uint16_t pin);
 
+/**
+ * Performs the operations specified by command with the given arguments.
+ *
+ * Parameter command: integer corresponding to the command to run
+ * Parameter args: whatever arguments are required for the given command
+ *
+ * Returns an optional 32-bit integer depending on the command used.
+ *
+ * See https://Jeremy924.github.io/rp42/firmware_docs.html for more info
+ */
 uint32_t system_call(uint16_t command, void* args);
 
 /* USER CODE END PD */
@@ -56,29 +88,51 @@ uint32_t system_call(uint16_t command, void* args);
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-unsigned int KEY_QUEUE_SIZE = 5;
+
+/**
+ * Capacity of queue for storing key presses. May dynamically increase in size if too many keys are enqueued
+ */
+unsigned int KEY_QUEUE_CAP = 5;
+
+/**
+ * Queue for storing key presses. Size is specificied by KEY_QUEUE_SIZE
+ */
 uint8_t* key_queue;
-//uint32_t test[1000];
+
+/**
+ * Number of elements in key queue
+ */
+uint8_t key_queue_size = 0;
+
+/**
+ * Index in key_queue where the next unprocessed key is located
+ */
 uint8_t kqri = 0;
+
+/**
+ * Index in key_queue where to write the next key received from keyboard
+ */
 uint8_t kqwi = 0;
 
+/**
+ * Indicates that the application has started. This is used to prevent key interrupts before the program has started.
+ */
 bool has_started = false;
 
+/**
+ * Struct containing the data from system calls. This data is only updated if the SVC instruction is used, not if system_call
+ * is call directly.
+ *
+ * The struct must be located in the SYS_CALL_DATA section so that applications can read and write to it.
+ */
 SystemCallData __attribute__((section(".SYS_CALL_DATA"))) systemCallData;
 
-/*uint64_t __attribute__((section("SYS_FUNC"))) (*sys_func)(uint16_t command, void* args);*/
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
-void reinitialize_qspi() {
-    // Deinitialize QSPI
-    HAL_QSPI_DeInit(&hqspi);
-    // Reinitialize QSPI with desired settings
-    MX_QUADSPI_Init();
-}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -102,34 +156,46 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  int code = 2;
+  int code = 2; // boot option. 0=run app, 1=run cli over USB, 2=run hardware test
+  	  	  	  	// boot option is selected when bootloader() is called
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  // this may not be necessary?
   HAL_NVIC_SetPriority(SVCall_IRQn, 15, 0);
 
-  key_queue = (uint8_t*) malloc(sizeof(uint8_t) * KEY_QUEUE_SIZE);
+  // allocate queue to store key presses
+  key_queue = (uint8_t*) malloc(sizeof(uint8_t) * KEY_QUEUE_CAP);
+
+  // other peripherals are initialized in the bootloader, not in the seciond below
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-
   /* USER CODE BEGIN 2 */
 
+  // call the bootloader
   code = bootloader();
 
+  // run the basic_hardware test
+  // hardware test should launch like a normal application
   if (code == 2) {
+	  // allocate 1kb for the stack for the hardware test program
 	  __set_PSP(malloc(1000));
+
+	  // switch to app mode and switch to psp
 	  __asm("MRS R0, CONTROL");
 	  __asm("ORR R0, R0, #0x07");
 	  __asm("MSR CONTROL, R0");
 	  __asm("MRS R0, CONTROL");
 
+	  // this may not be necessary since instruction cache is not being used
 	  __DSB();
 	  __ISB();
 
+	  // start the app
 	  Basic_Hardware_Test();
   }
 
@@ -139,6 +205,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // if the boot code is not 0 or 2, then run the serial interface
 	  run_console();
     /* USER CODE END WHILE */
 
@@ -200,28 +267,80 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 int bootloader() {
+	// disable instruction cache for now since it causes weird errors when switching from intenral flash to qspi flash
 	__HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
 	__HAL_FLASH_DATA_CACHE_ENABLE();
 
+	// initialize gpios
 	  MX_GPIO_Init();
 
+	  //???
 	SCB->SHCSR |= 0x70000;
 
-	//sys_func = system_call;
 
+	// Set all rows to high so that interrupts are triggered when button is pressed
 	  HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin, GPIO_PIN_SET);
+
+	  // enable power for flash and lcd
 	  HAL_GPIO_WritePin(PWR_PERPH_GPIO_Port, PWR_PERPH_Pin, SET);
+	  // give it 10ms for things to start up
 	  HAL_Delay(10);
 
+	  // scan keyboard to get bootcode
 	  int code = Scan_Keyboard();
 
+	  // initialize tim16 for deboucning
 	  MX_TIM16_Init();
+	  // qspi flash interface
 	  MX_QUADSPI_Init();
+	  // screen interface
 	  MX_SPI3_Init();
 
+	  // start usb stack
+	  MX_USB_OTG_FS_PCD_Init();
 	  MX_USB_DEVICE_Init();
+
+	  // initialize fs
 	  MX_FATFS_Init();
 
+	  //run_fatfs_qspi_test();
+/*
+	  FATFS fs;
+	  FRESULT fr;
+
+
+	  uint8_t force_makefs = 0;
+	  fr = f_mount(&fs, "0:", 1);
+	  if (fr == FR_NO_FILESYSTEM || (force_makefs == 1)) {
+		  BYTE work_buf[512];
+		 fr = f_mkfs("0:", FM_ANY, 0, work_buf, 512);
+
+		 f_mkdir("0:/TEST");
+	  }
+
+
+	  if (fr != FR_OK) Error_Handler();
+
+	  FIL f;
+	  const char* path = "0:/TEST/FROMRP.TXT"; // Replace with your path
+
+	  fr = f_open(&f, path, FA_READ);
+	  BYTE readBuf[256];
+	  UINT bytesRead;
+	  memset(readBuf, 0, 256);
+	  fr = f_read(&f, readBuf, 255, &bytesRead);
+	  f_close(&f);
+
+	  fr = f_open(&f, "0:/TEST/FROMRP.TXT", FA_WRITE | FA_CREATE_ALWAYS);
+
+	  BYTE writeData[] = "HELLO FROM RP-42";
+	  fr = f_write(&f, writeData, sizeof(writeData), &bytesRead);
+
+	  f_close(&f);
+	  f_mount(NULL, "0:", 0);
+	  // In your main while(1) loop
+*/
+	  // if code is not 1 or 2 then start application
 	  if (code != 1 && code != 2) {
 		  CSP_QSPI_EnableMemoryMappedMode();
 
@@ -246,11 +365,59 @@ int bootloader() {
 			  __ISB();
 
 			has_started = true;
+
+			HAL_Delay(50);
 			jumpToApp();
 	  }
 		has_started = true;
 
 	  return code;
+}
+
+
+void pushKeyQueue(uint8_t key) {
+	// if the queue is full, then attempt to increase its size
+	if (key_queue_size == KEY_QUEUE_CAP-1) {
+		//__asm("BKPT #0");
+		// use constant increments since it should almost never expand
+		uint8_t* new_queue = malloc(sizeof(uint8_t) * (KEY_QUEUE_CAP + 3));
+
+		// if its out of memory, then just overwrite the current queue
+		if (new_queue != NULL) {
+			// copy items over to new queue starting at index 0 in the new queue
+			unsigned int new_kqri = 0;
+			while (kqri != kqwi) {
+				new_queue[new_kqri++] = key_queue[kqri++];
+				if (kqri == KEY_QUEUE_CAP) kqri = 0;
+			}
+			kqri = 0; // queue is filled with items that have not yet been read
+			kqwi = KEY_QUEUE_CAP; // next index to write is the max size of the old queue
+			KEY_QUEUE_CAP += 3; // increase its size by 3
+
+			free(key_queue);
+
+			key_queue = new_queue;
+		} else {
+			// If it can't resize then just overwrite
+		}
+	}
+
+	key_queue[kqwi++] = key;
+	key_queue_size++;
+	if (kqwi == KEY_QUEUE_CAP) kqwi = 0;
+	/*uint8_t new_kqwi = kqwi + 1;
+	if (new_kqwi == KEY_QUEUE_SIZE) new_kqwi = 0;
+
+	// queue overflowed
+	if (new_kqwi == kqri) {
+		//while (1) {
+			// this is just for testing. In the future it should probably allocate a bigger queue
+		//	__asm("NOP");
+		//}
+	}
+
+	key_queue[kqwi] = key;
+	kqwi = new_kqwi;*/
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -267,38 +434,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 	uint8_t key = GetKey(GPIO_Pin);
 
+	pushKeyQueue(key);
 
-		// if the queue is full, then attempt to increase its size
-		if ((kqwi == (KEY_QUEUE_SIZE - 1) && (kqri == 0)) || (kqwi == (kqri - 1))) {
-			// use constant increments since it should almost never expand
-			uint8_t* new_queue = malloc(sizeof(uint8_t) * (KEY_QUEUE_SIZE + 3));
-
-			// if its out of memory, then just overwrite the current queue
-			if (new_queue != NULL) {
-				// copy items over to new queue starting at index 0 in the new queue
-				unsigned int new_kqri = 0;
-				while (kqri != kqwi) {
-					new_queue[new_kqri++] = key_queue[kqri++];
-					if (kqri == KEY_QUEUE_SIZE) kqri = 0;
-				}
-				kqri = 0; // queue is filled with items that have not yet been read
-				kqwi = KEY_QUEUE_SIZE; // next index to write is the max size of the old queue
-				KEY_QUEUE_SIZE += 3; // increase its size by 3
-
-				free(key_queue);
-
-				key_queue = new_queue;
-			} else {
-				// If it can't resize then just overwrite
-			}
-		}
-
-		key_queue[kqwi++] = key;
-		if (kqwi == KEY_QUEUE_SIZE) kqwi = 0;
-
-
-
-		HAL_TIM_Base_Start_IT(&htim16);
+	HAL_TIM_Base_Start_IT(&htim16);
 }
 
 
@@ -327,10 +465,10 @@ uint8_t LCD_BUFFER[132 * 4];
 #define POWER_DOWN      0x0020
 #define GET_ERROR       0x0030
 #define CLEAR_ERROR     0x0031
-#define PASTE_TO_PC     0x0040
-#define SET_COPY_ISR    0x0041
-#define RM_COPY_ISR     0x0042
-#define SET_COPY_BUF    0x0043
+#define DELAY           0x0040
+#define DELAY_UNTIL     0x0041
+#define MILLIS          0x0042
+#define PASTE           0x0050
 
 #define SET_STATUS(flag) system_status |= flag
 int TEMP_count = 0;
@@ -350,6 +488,9 @@ uint32_t system_call(uint16_t command, void* args) {
 	switch (command) {
 	case NOP:
 		return *(uint32_t*) args;
+	case POWER_DOWN:
+		Powerdown();
+		return 0;
 	case GET_KEY:
 		return key_queue[kqri];
 		//return (uint32_t) Scan_Keyboard();
@@ -370,12 +511,13 @@ uint32_t system_call(uint16_t command, void* args) {
 			//reinitialize_qspi();
 		}
 		key = key_queue[kqri++];
+		key_queue_size--;
 		//uint8_t key = 255;
 		//while (key == 255) {
 		//	key = Scan_Keyboard();
 		//}
 		//uint8_t key = Scan_Keyboard();
-		if (kqri == KEY_QUEUE_SIZE) kqri = 0;
+		if (kqri == KEY_QUEUE_CAP) kqri = 0;
 
 		return key;
 	case PUSH_KEY:
@@ -385,8 +527,9 @@ uint32_t system_call(uint16_t command, void* args) {
 			break;
 		}
 	case RELEASE_KEY:
-		key_queue[kqwi++] = key;
-		if (kqwi == KEY_QUEUE_SIZE) kqwi = 0;
+		//key_queue[kqwi++] = key;
+
+		//if (kqwi == KEY_QUEUE_CAP) kqwi = 0;
 		break;
 	case CLEAR_KEY_QUEUE:
 		kqwi = kqri;
@@ -402,7 +545,6 @@ uint32_t system_call(uint16_t command, void* args) {
 
 		//UpdateLCD();
 		break;
-		uint8_t* test = 0;
 	case DRAW_PAGE0:
 	case DRAW_PAGE1:
 	case DRAW_PAGE2:
@@ -426,21 +568,23 @@ uint32_t system_call(uint16_t command, void* args) {
 			LCD_BUFFER[i] = 0;
 		UpdateLCD();
 		break;
-	case POWER_DOWN:
-		break;
 	case GET_ERROR:
 		system_status &= *(uint32_t*) args;
 	case CLEAR_ERROR:
 		return_value = system_status;
 		break;
-	case SET_COPY_ISR:
-		//COPY_ISR = (void (*)(void *)) args;
+	case DELAY:
 		break;
-	case RM_COPY_ISR:
-		//COPY_ISR = NULL;
+	case DELAY_UNTIL:
 		break;
-	case PASTE_TO_PC:
-		break;
+	case MILLIS:
+		return HAL_GetTick();
+	case PASTE:
+		char* paste_buf = (char*) args;
+		SendKeystrokes(&hUsbDevice, paste_buf);
+		return 0;
+		//uint16_t length = strlen(paste_buf);
+		//CDC_Transmit_FS(paste_buf, length);
 	default:
 		SET_STATUS(INVALID_COMMAND);
 	}
@@ -519,6 +663,12 @@ uint8_t GetKey(uint16_t pin)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
 	if (htim->Instance == TIM16) {
 		HAL_TIM_Base_Stop_IT(&htim16);
+
+		uint8_t key = Scan_Keyboard();
+		if (key == 255) {
+			// they key had been released during the debounce period
+			pushKeyQueue(255);
+		}
 
 		  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
 		  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);

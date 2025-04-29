@@ -320,7 +320,7 @@ DRESULT USER_ioctl (
     	*(WORD*) buff = (WORD) SECTOR_SIZE;
     	return RES_OK;
     case GET_BLOCK_SIZE:
-    	*(DWORD*) buff = (DWORD) 0x1000000000000;
+    	*(DWORD*) buff = (DWORD) 0x1000;
     	return RES_OK;
     }
 

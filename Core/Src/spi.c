@@ -20,6 +20,79 @@
 /* Includes ------------------------------------------------------------------*/
 #include "spi.h"
 
+uint8_t icon[] = {
+		0b00100001,
+		0b01000001,
+		0b01000001,
+		0b00111111,
+		0b00000000,
+
+		0b01111110,
+		0b00000001,
+		0b01111110,
+		0b00000001,
+		0b01111110,
+
+		0b00000000,
+		0b01111111,
+		0b01000000,
+		0b01000000,
+
+		0b00000000,
+		0b00000000,
+		0b00000000,
+
+		0b01111111,
+		0b00001001,
+		0b01110110,
+		0b00000000,
+
+		0b01111111,
+		0b00010001,
+		0b00001110,
+		0b00000000,
+
+		0b00011111,
+		0b00011000,
+		0b01111111,
+		0b00000000,
+
+		0b01100001,
+		0b01010001,
+		0b01011110,
+		0b00000000,
+
+		0b00000000,
+		0b00000000,
+		0b00000000,
+
+		0b00111110,
+		0b01111111,
+		0b01100011,
+		0b00111110,
+		0b00000000,
+
+		0b01100000,
+		0b01100000,
+		0b00000000,
+
+		0b00111110,
+		0b01111111,
+		0b01100011,
+		0b00111110,
+		0b00000000,
+
+		0b01100000,
+		0b01100000,
+		0b00000000,
+
+		0b01111111,
+		0b01111111,
+		0b01011001,
+		0b01111011,
+		0b00000000
+};
+
 /* USER CODE BEGIN 0 */
 uint8_t characters[10][5] = {
 	{
@@ -149,9 +222,19 @@ void MX_SPI3_Init(void)
 
   sendCommand(LCD_INIT_COMMANDS, LCD_INIT_COMMAND_COUNT);
   setAddress(0, 0);
-  sendData(characters[0], 5);
-  /* USER CODE END SPI3_Init 2 */
+  sendData(icon, sizeof(icon));
+  setAddress(0, sizeof(icon));
+  uint8_t* blank = malloc(132);
+  memset(blank, 0, 132);
 
+  sendData(blank, 132 - sizeof(icon));
+  for (int i = 1; i < 4; i++) {
+	  setAddress(i, 0);
+	  sendData(blank, 132);
+  }
+
+  free(blank);
+  /* USER CODE END SPI3_Init 2 */
 }
 
 void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)

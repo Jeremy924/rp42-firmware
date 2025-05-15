@@ -349,7 +349,7 @@ int8_t STORAGE_Write(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_
     HAL_StatusTypeDef status = HAL_OK;
     // Allocate buffer on stack - ensure stack size is sufficient!
     // If QSPI_BLOCK_SIZE is large (e.g., 64KB), consider static or dynamic allocation.
-    BYTE flash_buffer[QSPI_BLOCK_SIZE];
+    BYTE* flash_buffer = sector_copy_buffer;
 
     if (lun != 0) {
         return USBD_FAIL;

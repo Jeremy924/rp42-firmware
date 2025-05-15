@@ -8,6 +8,8 @@
 #include "quadspi.h"
 //#include "usbd_cdc_if.h"
 #include "usbd_cdc_acm_if.h"
+#include "FSUtils.h"
+#include "ProgressBar.h"
 
 
 uint32_t ReadFill(char* buf, uint32_t capacity);
@@ -60,6 +62,9 @@ _Noreturn void run_console() {
 				current_menu = HAL_MENU;
 			//} else if (strcmp("whereami", command) == 0) {
 			//	_WriteString("Running from FLASH!!!!", 1);
+			} else if (strcmp("ls", command) == 0) {
+				test_list_directory_contents("0:");
+				WriteString(">");
 			}
 			else if (strcmp("mount", command) == 0) {
 
@@ -176,6 +181,23 @@ _Noreturn void run_console() {
 			} else if (strcmp(command, "PWR OFF") == 0) {
 				HAL_GPIO_WritePin(PWR_PERPH_GPIO_Port, PWR_PERPH_Pin, RESET);
 				WriteString("\nfrw>");
+			} else if (strcmp(command, "BAR_SHOW") == 0) {
+				init_progress_bar();
+			} else if (size >= 2 && command[0] == 'B' && command[1] == 'M') {
+				if (strcmp(strtok(command, " "), "BM") != 0) {
+					WriteString("\033[31mInvalid Format\033[0m\nfrw>");
+					continue;
+				}
+				char* token = strtok(NULL, " ");
+				char* parse_end;
+				long value = strtol(token, &parse_end, 10);
+				if (*parse_end != '\0') {
+					WriteString("\033[31mInvalid Format\033[0m\nfrw>");
+					continue;
+				}
+
+				if (value < 0 || value > 255) WriteString("Bad value\r\n");
+				else set_progress((uint8_t) value);
 			}
 			else if (size >= 2 && command[0] == 'R' && command[1] == 'S') {
 				if (strcmp(strtok(command, " "), "RS") != 0) {
@@ -450,7 +472,7 @@ _Noreturn void run_console() {
 				uint8_t buf[256];
 				uint32_t check = 0;
 				// last couple of kilobytes aren't important
-				for (uint32_t address = 0; address < 800000; address+=256) {
+				for (uint32_t address = 0; address < 0x100000 / 256; address+=256) {
 					CSP_QSPI_Read(buf, address, 256);
 					for (unsigned int i = 0; i < 256; i++)
 						if (buf[i] != 255)
@@ -513,8 +535,13 @@ _Noreturn void run_console() {
 							//free(write_value_buf);
 						}
 			 else if (strcmp(command, "ec") == 0) {
-				 CSP_QSPI_Erase_Chip();
-				 WriteString("Please wait 100 seconds before running another flash command\nfrw>");
+				 WriteString("Please wait a few seconds before running another flash command\n");
+
+				 for (unsigned int start_address = 0; start_address < 0x100000; start_address += 0x10000)
+					 CSP_QSPI_EraseSector(start_address);
+
+				 WriteString("Done\nfrw>");
+				 //CSP_QSPI_Erase_Chip();
 			 }
 			else if (strcmp(command, "we") == 0) {
 				QSPI_WriteEnable();

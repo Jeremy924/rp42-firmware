@@ -33,6 +33,7 @@ extern "C" {
 /* USER CODE END Includes */
 
 extern QSPI_HandleTypeDef hqspi;
+extern uint8_t sector_copy_buffer[];
 
 /* USER CODE BEGIN Private defines */
 

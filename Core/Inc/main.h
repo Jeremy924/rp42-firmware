@@ -44,10 +44,14 @@ typedef struct  __attribute__((packed)) {
 //char* COPY_BUF = NULL;
 extern void debounce_time_up();
 extern SystemCallData systemCallData;
+
+extern uint32_t system_call(uint16_t command, void* args);
+extern uint8_t Scan_Keyboard(void);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+extern uint8_t LCD_BUFFER[];
 
 /* USER CODE END ET */
 

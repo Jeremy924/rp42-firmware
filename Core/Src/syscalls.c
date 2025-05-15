@@ -29,7 +29,8 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/times.h>
-
+#include "usbd_cdc_acm_if.h"
+#include "usb_device.h"
 
 /* Variables */
 extern int __io_putchar(int ch) __attribute__((weak));
@@ -77,16 +78,113 @@ __attribute__((weak)) int _read(int file, char *ptr, int len)
   return len;
 }
 
-__attribute__((weak)) int _write(int file, char *ptr, int len)
-{
-  (void)file;
-  int DataIdx;
+// The user-provided buffer
+char write_buffer[64];
+// Static variable to keep track of the current number of bytes in write_buffer
+static int buffer_current_size = 0;
 
-  for (DataIdx = 0; DataIdx < len; DataIdx++)
-  {
-    __io_putchar(*ptr++);
-  }
-  return len;
+// Helper function to flush the write_buffer via CDC_Transmit
+// Returns:
+//   Number of bytes successfully flushed.
+//   -1 on critical error (e.g., USB not configured, or CDC_Transmit critical failure).
+//   0 if no bytes were flushed but no critical error (e.g., CDC endpoint busy/NACK).
+static int _internal_flush_buffer() {
+    if (buffer_current_size == 0) {
+        return 0; // Nothing to flush
+    }
+
+    if (hUsbDevice.dev_state != USBD_STATE_CONFIGURED) {
+        return -1; // Cannot transmit if USB not configured
+    }
+
+    // Attempt to transmit the entire buffer content
+    uint8_t status;
+
+    unsigned int iterations = 0;
+    do {
+    	 status = CDC_Transmit(0, (const uint8_t*)write_buffer, buffer_current_size);
+    	 if (status == USBD_BUSY) HAL_Delay(10);
+    	 iterations++;
+    } while (status == USBD_BUSY && iterations < 20);
+
+    if (iterations == 20) return -1;
+
+    if (status != USBD_OK) { // CDC_Transmit reported a critical error
+        return -1;
+    }
+    else {
+        int flushed_amount = buffer_current_size;
+        buffer_current_size = 0; // Reset buffer
+        return flushed_amount;
+    }
+}
+
+__attribute__((weak)) int _write(int file, char *ptr, int len) {
+    // We only handle stdout (1) and stderr (2) for this _write implementation
+    if (file != 1 && file != 2) {
+        errno = EBADF; // Bad file descriptor
+        return -1;
+    }
+
+    // Initial check: if USB is not configured and buffer is empty,
+    // we can't proceed. If buffer has data, we might fill it more,
+    // but flushing will fail later if state doesn't change.
+    // The original code returns -1 if not configured, which is strict and simple.
+    if (hUsbDevice.dev_state != USBD_STATE_CONFIGURED && buffer_current_size == 0) {
+        errno = EIO; // Input/output error
+        return -1;
+    }
+
+    int input_bytes_processed = 0; // Number of bytes consumed from the input 'ptr'
+
+    for (int i = 0; i < len; i++) {
+        // Add current character from input ptr to our write_buffer
+        write_buffer[buffer_current_size] = ptr[i];
+        buffer_current_size++;
+        input_bytes_processed++;
+
+        int flush_needed = 0;
+        if (buffer_current_size == sizeof(write_buffer)) {
+            flush_needed = 1; // Buffer is full
+        } else if (ptr[i] == '\n' && (file == 1 || file == 2)) {
+            flush_needed = 1; // Newline character encountered for stdout/stderr
+        }
+
+        if (flush_needed) {
+            int buffer_size_before_flush_attempt = buffer_current_size;
+            int flushed_bytes_count = _internal_flush_buffer();
+
+            if (flushed_bytes_count < 0) {
+                // A critical error occurred during flush (e.g., USB became unconfigured).
+                // The characters currently in the buffer (including ptr[i]) were not sent.
+                errno = EIO;
+                // Return -1 to indicate failure. The caller (libc) might retry the whole failed write.
+                // Or, more advanced: return bytes successfully written *before* this failed chunk.
+                // For simplicity here, a critical flush error fails the current _write call.
+                return -1;
+            }
+
+            if (buffer_size_before_flush_attempt == sizeof(write_buffer) && flushed_bytes_count == 0) {
+                // Buffer was full, tried to flush, but NO bytes went out (e.g., USB NACKing, endpoint busy).
+                // The current character ptr[i] is in the buffer, but we couldn't make space for more.
+                // To prevent an infinite loop (if the condition persists), we should indicate no progress.
+                // Revert adding ptr[i] as it effectively couldn't be accommodated.
+                buffer_current_size--;
+                input_bytes_processed--;
+                errno = EAGAIN; // Or EWOULDBLOCK; "Resource temporarily unavailable"
+                return input_bytes_processed; // Return bytes successfully processed *before* this stall
+            }
+            // If flushed_bytes_count > 0 but less than buffer_size_before_flush_attempt (partial write),
+            // _internal_flush_buffer has already updated buffer_current_size.
+            // The loop continues, and the buffer might still be full or fill up again.
+        }
+    }
+
+    // All 'len' bytes from 'ptr' have been processed (copied to write_buffer).
+    // Some or all of it may have been flushed during the process.
+    // The _write system call typically returns the number of bytes "accepted" from the input.
+    return input_bytes_processed; // Should be equal to 'len' if the loop completed fully.
+
 }
 
 int _close(int file)

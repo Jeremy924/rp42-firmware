@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <FSUtils.h>
 #include "main.h"
 #include "fatfs.h"
 #include "quadspi.h"
@@ -24,6 +25,12 @@
 #include "tim.h"
 #include "usb_otg.h"
 #include "gpio.h"
+#include "rng.h"
+#include "TestApp.h"
+#include <time.h>       // Required for time_t, struct tm, mktime
+#include <sys/stat.h>   // Required for struct stat and S_IFREG, S_IFDIR, etc.
+#include <string.h>     // Required for memset
+#include "ff.h"         // Required for FILINFO and FatFs attribute defines (AM_DIR, AM_RDO)
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -34,7 +41,9 @@
 #include "usb_device.h"
 #include "usbd_hid_keyboard.h"
 #include "keyboardUtils.h"
-#include "FatFSTest.h"
+#include "ProgressBar.h"
+#include "tetris.h"
+#include "stm32l4xx_hal_rng.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +59,6 @@
  *
  * Returns a number from 1 to 37 representing the key currently being pressed, or 255 if no key is being pressed
  */
-uint8_t Scan_Keyboard(void);
 
 /**
  * A function to test the buttons and screen. This function will never return
@@ -76,8 +84,6 @@ uint8_t GetKey(uint16_t pin);
  *
  * See https://Jeremy924.github.io/rp42/firmware_docs.html for more info
  */
-uint32_t system_call(uint16_t command, void* args);
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -103,6 +109,13 @@ uint8_t* key_queue;
  * Number of elements in key queue
  */
 uint8_t key_queue_size = 0;
+
+#define MAX_OPEN_FILES 1
+/**
+ * List of currently open files
+ */
+unsigned int num_open_files = 0;
+FIL open_files[MAX_OPEN_FILES];
 
 /**
  * Index in key_queue where the next unprocessed key is located
@@ -169,6 +182,7 @@ int main(void)
 
   // allocate queue to store key presses
   key_queue = (uint8_t*) malloc(sizeof(uint8_t) * KEY_QUEUE_CAP);
+  memset(key_queue, 255, KEY_QUEUE_CAP);
 
   // other peripherals are initialized in the bootloader, not in the seciond below
   /* USER CODE END SysInit */
@@ -275,7 +289,7 @@ int bootloader() {
 	  MX_GPIO_Init();
 
 	  //???
-	SCB->SHCSR |= 0x70000;
+	  ///SCB->SHCSR |= 0x70000;
 
 
 	// Set all rows to high so that interrupts are triggered when button is pressed
@@ -296,18 +310,40 @@ int bootloader() {
 	  // screen interface
 	  MX_SPI3_Init();
 
-	  // start usb stack
-	  MX_USB_OTG_FS_PCD_Init();
-	  MX_USB_DEVICE_Init();
+	  // start usb
+	  //MX_USB_OTG_FS_PCD_Init();
+	  //MX_USB_DEVICE_Init();
 
 	  // initialize fs
 	  MX_FATFS_Init();
 
-	  //run_fatfs_qspi_test();
+	  /*init_progress_bar();
+	  uint8_t progress = 0;
+	  while (1) {
+		  progress++;
+		  HAL_Delay(10);
+		  //set_progress(progress);
+		  continuous_progres_bar(&progress);
+	  }*/
+
+
+	 // while (1) {
+	 //		SendKeystrokes(&hUsbDevice, "hello", 1000);
+     //HAL_Delay(2000);
+	 // }
+
+	  if (code == 4 || code == 5) run_fatfs_qspi_test(code);
+	  else {
+		  if (code == 1) {
+		  MX_USB_OTG_FS_PCD_Init();
+		  MX_USB_DEVICE_Init();
+		  }
+		  FS_mount();
+	  }
+
 /*
 	  FATFS fs;
 	  FRESULT fr;
-
 
 	  uint8_t force_makefs = 0;
 	  fr = f_mount(&fs, "0:", 1);
@@ -340,21 +376,27 @@ int bootloader() {
 	  f_mount(NULL, "0:", 0);
 	  // In your main while(1) loop
 */
+	  if (code == 3) {
+		  //MX_RNG_Init();
+		  uint32_t seed;
+		  //HAL_RNG_GenerateRandomNumber(&hrng, &seed);
+
+		  has_started = true;
+		  tetris_main(seed);
+	  }
+
 	  // if code is not 1 or 2 then start application
 	  if (code != 1 && code != 2) {
-		  CSP_QSPI_EnableMemoryMappedMode();
+
+		    CSP_QSPI_EnableMemoryMappedMode();
 
 			uint32_t initial_sp = *(__IO uint32_t*)   0x90000000;
 			uint32_t reset_vector = *(__IO uint32_t*) 0x90000004;
 
-			// CDC_USB_DEINIT();
-
-			//SCB->VTOR = 0x90000000;
-
 			typedef void (*free42App)(void);
 			free42App jumpToApp = (free42App) reset_vector;
 
-			__set_PSP(initial_sp);
+			  __set_PSP(initial_sp);
 
 			  __asm("MRS R0, CONTROL");
 			  __asm("ORR R0, R0, #0x07");
@@ -366,10 +408,15 @@ int bootloader() {
 
 			has_started = true;
 
-			HAL_Delay(50);
+			if (code == 6) {
+				//printf("starting\r\n");
+				//printf("%d\r\n", test_app_main());
+			}
 			jumpToApp();
 	  }
 		has_started = true;
+
+
 
 	  return code;
 }
@@ -381,6 +428,7 @@ void pushKeyQueue(uint8_t key) {
 		//__asm("BKPT #0");
 		// use constant increments since it should almost never expand
 		uint8_t* new_queue = malloc(sizeof(uint8_t) * (KEY_QUEUE_CAP + 3));
+		memset(new_queue, 255, KEY_QUEUE_CAP + 3);
 
 		// if its out of memory, then just overwrite the current queue
 		if (new_queue != NULL) {
@@ -441,6 +489,161 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 
 void Powerdown() {
+	uint8_t command = 0b10101110;
+	sendCommand(&command, 1);
+}
+
+void fil_to_limited_stat(const FIL* fil_ptr, struct stat* st, int logical_drive_num) {
+	     if (!fil_ptr || !st) return;
+     memset(st, 0, sizeof(struct stat));
+
+     // Size
+     st->st_size = fil_ptr->obj.objsize;
+
+     // Mode (from attributes)
+     if (fil_ptr->obj.attr & AM_DIR) {
+         st->st_mode |= S_IFDIR;
+         // Set default directory permissions
+     } else {
+         st->st_mode |= S_IFREG;
+         // Set default file permissions
+     }
+     if (fil_ptr->obj.attr & AM_RDO) {
+         // Remove write permissions
+     }
+
+     // Timestamps (st_mtime, st_atime, st_ctime) would be unknown or set to default (e.g., 0)
+     st->st_mtime = 0; // Indicate timestamp is not available from FIL directly
+     st->st_atime = st->st_mtime;
+     st->st_ctime = st->st_mtime;
+
+     // Inode (optional, from start cluster)
+     st->st_ino = (ino_t)fil_ptr->obj.sclust;
+
+     // Device
+     st->st_dev = (dev_t)logical_drive_num;
+     st->st_blksize = 512;
+
+     // ... other fields like nlink, uid, gid would be defaults
+}
+
+void filinfo_to_stat(const FILINFO* finfo, struct stat* st, int fatfs_logical_drive_num) {
+    if (!finfo || !st) {
+        return; // Safety check
+    }
+
+    // Initialize the stat structure to zero.
+    // This ensures all fields are cleared, especially those not directly mapped.
+    memset(st, 0, sizeof(struct stat));
+
+    // 1. File size
+    st->st_size = finfo->fsize;
+
+    // 2. File type and permissions (st_mode)
+    st->st_mode = 0;
+    if (finfo->fattrib & AM_DIR) {
+        st->st_mode |= S_IFDIR; // It's a directory
+        // Default permissions for a directory: rwxr-xr-x
+        st->st_mode |= S_IRUSR | S_IWUSR | S_IXUSR; // User read, write, execute
+        st->st_mode |= S_IRGRP | S_IXGRP;         // Group read, execute
+        st->st_mode |= S_IROTH | S_IXOTH;         // Other read, execute
+    } else {
+        st->st_mode |= S_IFREG; // It's a regular file
+        // Default permissions for a file: rw-r--r--
+        st->st_mode |= S_IRUSR | S_IWUSR;         // User read, write
+        st->st_mode |= S_IRGRP;                   // Group read
+        st->st_mode |= S_IROTH;                   // Other read
+    }
+
+    // Adjust write permissions if the read-only attribute is set
+    if (finfo->fattrib & AM_RDO) {
+        // Remove write permissions for user, group, and other
+        st->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
+    }
+
+    // 3. Timestamps (st_mtime, st_atime, st_ctime)
+    // FatFs fdate and ftime need to be converted to time_t.
+    struct tm tminfo;
+    memset(&tminfo, 0, sizeof(struct tm));
+
+    // Decode FatFs fdate:
+    // Bits 15-9: Year (0..127, offset from 1980)
+    // Bits 8-5:  Month (1..12)
+    // Bits 4-0:  Day (1..31)
+    tminfo.tm_year = ((finfo->fdate >> 9) & 0x7F) + 1980 - 1900; // Year since 1900
+    tminfo.tm_mon  = ((finfo->fdate >> 5) & 0x0F) - 1;          // Month (0-11)
+    tminfo.tm_mday = (finfo->fdate & 0x1F);                     // Day of month (1-31)
+
+    // Decode FatFs ftime:
+    // Bits 15-11: Hour (0..23)
+    // Bits 10-5:  Minute (0..59)
+    // Bits 4-0:   Second/2 (0..29) -> multiply by 2 for actual seconds
+    tminfo.tm_hour = (finfo->ftime >> 11) & 0x1F;
+    tminfo.tm_min  = (finfo->ftime >> 5) & 0x3F;
+    tminfo.tm_sec  = (finfo->ftime & 0x1F) * 2;
+
+    // Let mktime handle daylight saving time calculations if applicable for the system
+    // For embedded systems without DST configuration, it usually doesn't matter much.
+    tminfo.tm_isdst = -1; // Let the library determine if DST is in effect
+
+    st->st_mtime = mktime(&tminfo); // Time of last data modification
+
+    // FatFs FILINFO doesn't store separate access or status change times.
+    // It's common practice to set them to the modification time.
+    st->st_atime = st->st_mtime; // Time of last access
+    st->st_ctime = st->st_mtime; // Time of last status change
+
+    // 4. Number of hard links (st_nlink)
+    // For FAT filesystems:
+    // - Files typically have 1 link.
+    // - Directories have at least 2 ('.' and '..'). For simplicity, we can use 1 for files and 2 for dirs.
+    //   A more accurate count for directories would require iterating, which is beyond this simple conversion.
+    if (st->st_mode & S_IFDIR) {
+        st->st_nlink = 2; // Minimum for directories ('.' and '..')
+    } else {
+        st->st_nlink = 1; // Files typically have one link
+    }
+
+    // 5. User ID (st_uid) and Group ID (st_gid)
+    // FatFs doesn't have a concept of users or groups in the POSIX sense.
+    // Set to 0 (root) or a default value.
+    st->st_uid = 0;
+    st->st_gid = 0;
+
+    // 6. Device ID (st_dev)
+    // This identifies the device containing the file.
+    // We can use the FatFs logical drive number if known.
+    st->st_dev = (dev_t)fatfs_logical_drive_num;
+
+    // 7. Inode number (st_ino)
+    // FatFs doesn't have inodes. The closest might be the start cluster,
+    // but FILINFO doesn't directly provide this in a readily usable form for st_ino.
+    // Setting to 0 or a placeholder is common. Some systems might use the file's
+    // directory entry location or start cluster if available and if it fits ino_t.
+    // For simplicity and general compatibility, 0 is often used.
+    // If you have the start cluster (e.g., from finfo->obj.sclust if FF_FS_LOCK is enabled
+    // and you are using f_stat with FF_FS_LOCK > 0), you could potentially use it,
+    // but ensure it fits within ino_t.
+    st->st_ino = 0; // Placeholder for inode number
+
+    // 8. Device ID (for special files) (st_rdev)
+    // Not applicable for regular FatFs files/directories.
+    st->st_rdev = 0;
+
+    // 9. Block size for filesystem I/O (st_blksize)
+    // This is the preferred block size for I/O.
+    // For FatFs, this is typically the sector size (512 bytes for most SD cards).
+    // If you have access to the FATFS object, you could use fs->ssize.
+    // Otherwise, use a common default.
+    st->st_blksize = 512; // Or fs->ssize if FATFS* fs is available
+
+    // 10. Number of blocks allocated (st_blocks)
+    // This is the number of st_blksize blocks allocated to the file.
+    if (st->st_blksize > 0) {
+        st->st_blocks = (st->st_size + st->st_blksize - 1) / st->st_blksize;
+    } else {
+        st->st_blocks = 0; // Avoid division by zero if st_blksize is somehow 0
+    }
 }
 
 #define INDEX_OUT_OF_RANGE 0x0002
@@ -469,6 +672,19 @@ uint8_t LCD_BUFFER[132 * 4];
 #define DELAY_UNTIL     0x0041
 #define MILLIS          0x0042
 #define PASTE           0x0050
+#define FOPEN           0x0100
+#define FCLOSE          0x0101
+#define FREAD           0x0110
+#define FWRITE          0x0111
+#define FSEEK           0x0112
+
+#define FSTAT           0x0113
+#define STAT            0x0114
+#define FLIST           0x0120
+#define FUNLINK         0x0121
+#define FRENAME         0x0122
+#define MKDIR           0x0123
+#define RMDIR           0x0124
 
 #define SET_STATUS(flag) system_status |= flag
 int TEMP_count = 0;
@@ -489,10 +705,14 @@ uint32_t system_call(uint16_t command, void* args) {
 	case NOP:
 		return *(uint32_t*) args;
 	case POWER_DOWN:
+		__asm("BKPT #0");
 		Powerdown();
 		return 0;
 	case GET_KEY:
-		return key_queue[kqri];
+		if (kqri == kqwi) return 254;
+		char key = key_queue[kqri++];
+		if (kqri == KEY_QUEUE_CAP) kqri = 0;
+		return key;
 		//return (uint32_t) Scan_Keyboard();
 	case WA_KEY:
 
@@ -581,10 +801,138 @@ uint32_t system_call(uint16_t command, void* args) {
 		return HAL_GetTick();
 	case PASTE:
 		char* paste_buf = (char*) args;
-		SendKeystrokes(&hUsbDevice, paste_buf);
+		SendKeystrokes(&hUsbDevice, paste_buf, 1000);
 		return 0;
 		//uint16_t length = strlen(paste_buf);
 		//CDC_Transmit_FS(paste_buf, length);
+	case FOPEN:
+		if (num_open_files == MAX_OPEN_FILES) return -1;
+		uint32_t f_handle = num_open_files;
+		FIL* f = &open_files[f_handle];
+
+		struct FileOpenParams* params = (struct FileOpenParams*) args;
+
+		if (params->flags == 0) params->flags = FA_READ;
+		else params->flags = FA_WRITE | FA_CREATE_ALWAYS;
+
+		FRESULT status = f_open(f, params->filename, params->flags);
+
+		if (status != FR_OK) return 1;
+
+		num_open_files++;
+
+		params->handle = f_handle + 3; // 0=stdin,1=stdout,2=stderr
+
+		return 0;
+	case FCLOSE:
+		f_handle = (uint32_t) args;
+		if (f_handle < 3) return 0;
+		if (f_handle >= (3 + num_open_files)) return 1;
+
+		status = f_close(&open_files[f_handle - 3]);
+
+		if (status != FR_OK) return 0;
+		num_open_files--;
+		return 0;
+	case FWRITE:
+	case FREAD:
+		struct FileRWParams* rwParams = (struct FileRWParams*) args;
+
+		rwParams->bytesRW = 0;
+		if (rwParams->handle == 0) { // stdin
+			return 0;
+		} else if (rwParams->handle == 1 || rwParams->handle == 2) { // stdout or stderr
+			return 1;
+		}
+
+		if (rwParams->handle >= num_open_files + 3) return 2; // out of range of file handles
+
+		f = &open_files[rwParams->handle - 3];
+
+		if (command == FREAD)
+			status = f_read(f, rwParams->buf, rwParams->len, (UINT*)&rwParams->bytesRW);
+		else status = f_write(f, rwParams->buf, rwParams->len, (UINT*)&rwParams->bytesRW);
+
+		if (status == FR_OK) return 0;
+		return 3;
+	case FSEEK:
+		struct FileSeekParams* seekParams = (struct FileSeekParams*) args;
+
+		if (seekParams->handle < 3 || seekParams->handle >= 3 + num_open_files) return 1;
+		f = &open_files[seekParams->handle - 3];
+
+		FSIZE_t current = f_tell(f);
+		FSIZE_t new_offset;
+		switch (seekParams->dir) {
+		case SEEK_SET:
+			new_offset = seekParams->offset;
+			break;
+		case SEEK_CUR:
+			if (seekParams->offset < 0 && (FSIZE_t)(-seekParams->offset) > current)
+				new_offset = 0;
+			else new_offset = current + seekParams->offset;
+			break;
+		case SEEK_END:
+			FSIZE_t fileSize = f_size(f);
+            if (seekParams->offset < 0 && (FSIZE_t)(-seekParams->offset) > fileSize) {
+                 new_offset = 0; // Cannot seek before the beginning of the file
+            } else {
+                new_offset = fileSize + seekParams->offset;
+            }
+
+            if (f_lseek(f, new_offset) != FR_OK) return -1;
+
+            return new_offset;
+		}
+
+		return 0;
+	case FUNLINK:
+			const char* path = (const char*) args;
+
+			status = f_unlink(path);
+			if (status != FR_OK) return 1;
+			return 0;
+	case FRENAME:
+		struct FileRenameParams* renameParams = (struct FileRenameParams*) args;
+
+		status = f_rename(renameParams->old_path, renameParams->new_path);
+
+		if (status == FR_OK)
+			return 0;
+		return 1;
+	case STAT:
+		struct FileStat* stat = (struct FileStat*) args;
+
+		FILINFO finfo;
+		status = f_stat(stat->path, &finfo);
+
+		if (status != FR_OK) return 1;
+
+		filinfo_to_stat(&finfo, stat->stat, 0);
+
+		return 0;
+	case FSTAT:
+		struct FileHandleStat* fstat = (struct FileHandleStat*) args;
+
+		if (fstat->handle < 3 || fstat->handle >= num_open_files + 3) return 1;
+
+		f = &open_files[fstat->handle - 3];
+
+		fil_to_limited_stat(f, fstat->stat, 0);
+
+		return 0;
+	case MKDIR:
+		const char* name = (const char*)args;
+
+		status = f_mkdir(name);
+		if (status != FR_OK) return 1;
+		return 0;
+	case RMDIR:
+		name = (const char*) args;
+		status = f_rmdir(name);
+		if (status != FR_OK) return 1;
+
+		return 0;
 	default:
 		SET_STATUS(INVALID_COMMAND);
 	}

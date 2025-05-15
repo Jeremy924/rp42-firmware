@@ -31,6 +31,7 @@ static uint8_t QSPI_ResetChip(void);
 /* USER CODE END 0 */
 
 QSPI_HandleTypeDef hqspi;
+uint8_t sector_copy_buffer[N25Q128A_SUBSECTOR_SIZE];
 
 /* QUADSPI init function */
 void MX_QUADSPI_Init(void)

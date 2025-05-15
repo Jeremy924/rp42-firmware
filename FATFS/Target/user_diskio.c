@@ -37,6 +37,7 @@
 #include "ff_gen_drv.h"
 #include <stdbool.h>
 #include "quadspi.h"
+#include "stm32l475xx.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -124,6 +125,28 @@ DSTATUS USER_status (
   /* USER CODE END STATUS */
 }
 
+
+/**
+ * @brief Checks if the QSPI peripheral is currently enabled and configured for memory-mapped mode.
+ * @param hqspi: pointer to a QSPI_HandleTypeDef structure that contains
+ * the configuration information for QSPI module.
+ * @retval bool: true if in memory-mapped mode, false otherwise.
+ */
+bool QSPI_IsMemoryMapped(QSPI_HandleTypeDef *hqspi) {
+    // 1. Check if the QSPI peripheral is enabled
+    if ((hqspi->Instance->CR & QUADSPI_CR_EN) == 0) {
+        return false; // QSPI is not enabled, so not actively memory-mapped
+    }
+
+    // 2. Check the FMODE bits in QUADSPI_CCR
+    // QSPI_FUNCTIONAL_MODE_MEMORY_MAPPED is typically (0x3UL << QUADSPI_CCR_FMODE_Pos)
+    if ((hqspi->Instance->CCR & QUADSPI_CCR_FMODE) == 0b1100000000000000000000000000) {
+        return true;
+    }
+
+    return false;
+}
+
 /**
   * @brief  Reads Sector(s)
   * @param  pdrv: Physical drive number (0..)
@@ -148,21 +171,12 @@ DRESULT USER_read (
 	// offset 1MB for free42
 	DWORD flashAddress = sector * SECTOR_SIZE + 0x100000;
 
-	uint8_t status = CSP_QSPI_Read(buff, flashAddress, totalSize);
+	if (QSPI_IsMemoryMapped(&hqspi)) {
+		memcpy(buff, (void*) (0x90000000 + flashAddress), totalSize);
+		return RES_OK;
+	}
 
-    if (status != HAL_OK) {
-    	HAL_StatusTypeDef status = HAL_QSPI_Abort(&hqspi);
-    	if (status != HAL_OK)
-    		Error_Handler();
-
-    	status = CSP_QSPI_Read(buff, flashAddress, totalSize);
-        if (status != HAL_OK)
-        	Error_Handler();
-
-        status = CSP_QSPI_EnableMemoryMappedMode();
-        if (status != HAL_OK)
-        	Error_Handler();
-    }
+	HAL_StatusTypeDef status = CSP_QSPI_Read(buff, flashAddress, totalSize);
 
 	if (status != HAL_OK) return RES_ERROR;
 
@@ -187,7 +201,7 @@ DRESULT USER_write (
 )
 {
     HAL_StatusTypeDef status = HAL_OK;
-    BYTE flash_buffer[QSPI_BLOCK_SIZE]; // Local buffer for one erase block (ensure stack space!)
+    BYTE* flash_buffer = sector_copy_buffer; // Local buffer for one erase block (ensure stack space!)
 
     // --- Parameter Validation ---
     if (pdrv != 0) {

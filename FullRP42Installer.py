@@ -7,6 +7,9 @@ import time
 import serial.tools.list_ports
 import ctypes
 
+from serial.serialutil import SerialException
+
+
 def _print_status(current, total, ser):
     ser.write(f'BM {int(current / total * 256)}\n'.encode())
 
@@ -48,12 +51,14 @@ def install_app(data: bytes, port: str, offset: int=0, erase_command: str='ec')-
             d += b'\xFF' * (size - len(d))
         ser.write(f'W {i + offset} {size} \n'.encode())
         ser.write(d)
+        serial_failed = 0
         while True:
             time.sleep(0.01)
             if ser.in_waiting != 0:
                 read = ser.read(ser.in_waiting)
                 if 'done'.encode() in read:
                     break
+
         count += 1
 
     ser.read(ser.in_waiting)
@@ -107,6 +112,7 @@ def list_serial_ports():
         print("No serial ports found.")
         return
 
+    port_nums = []
     print("Available serial ports:")
     for port in sorted(ports):
         # The 'port' object has attributes like 'device', 'description', 'hwid'
@@ -114,13 +120,15 @@ def list_serial_ports():
         print(f"    Description: {port.description}")
         print(f"    Hardware ID: {port.hwid}")
         print("-" * 20)
+        port_nums.append(port.device)
 
+    return port_nums
 
-def download_latest_free42bin()->(str, str):
+def download_latest_bin(app_list_url: str)->(str, str):
     """Gets the latest Free42 for Rp-42 binary and returns the file path with the binary"""
     # download release list
     try:
-        with urllib.request.urlopen('https://jeremy924.github.io/rp42/downloads/free42.json') as response:
+        with urllib.request.urlopen(app_list_url) as response:
             data_bytes = response.read()
             encoding = response.info().get_content_charset()
             data_string = data_bytes.decode(encoding)
@@ -170,49 +178,44 @@ def download_latest_free42bin()->(str, str):
     # return file path of latest version
     return data, version
 
+def download_latest_free42bin()->(str, str):
+    """Gets the latest Free42 for Rp-42 binary and returns the file path with the binary"""
+    return download_latest_bin('https://jeremy924.github.io/rp42/downloads/free42.json')
+
 def download_latest_firmware():
     # download latest version
-    try:
-        with urllib.request.urlopen('https://github.com/Jeremy924/rp42-firmware/releases/download/development/rp-firmware-0-0-6.bin') as response:
-            if response.status != 200:
-                return '', ''
-            data = response.read()
-    except urllib.error.URLError as e:
-        # Handles errors like network issues, invalid URL, etc.
-        print(f"URL Error: {e.reason}")
-        return '', ''
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON: {e}")
-        # You might want to inspect data_string here if decoding fails
-        # print(f"Response content: {data_string}")
-        return '', ''
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return None
-
-    return data
+    return download_latest_bin('https://jeremy924.github.io/rp42/downloads/firmware.json')
 
 if __name__ == "__main__":
     print("This installer is intended to update from firmware >=0.0.2 to the latest firmware and also update Free42.")
     print("If no port is listed below, then reset the calculator while holding the top left button. Then restart the installer.")
     print("If there are still no ports listed, then you may be using an even older version of firmware than what is supported.\n\n")
 
-    list_serial_ports()
-    port = input("Enter port: ")
+    ports = list_serial_ports()
+    if len(ports) == 1:
+        port = ports[0]
+    else: port = input("Enter port: ")
+    firmware, version = download_latest_firmware()
+    print("Latest firmware version:", version)
     print("Installing firmware")
-    update_firmware(download_latest_firmware(), port)
+    update_firmware(firmware, port)
 
     print("\n\nSetting up FS. \033[1mIMPORTANT: Do not interact with the calculator filesystem while installing. This may mess up the installation\033[0m")
-    list_serial_ports()
-    port = input("Enter port: ")
+    ports = list_serial_ports()
+    if len(ports) == 1:
+        port = ports[0]
+    else: port = input("Enter port: ")
     setup_fs(port)
 
     print("\n\nInstalling Free42")
-    list_serial_ports()
-    port = input("Enter port: ")
+    ports = list_serial_ports()
+    if len(ports) == 1:
+        port = ports[0]
+    else: port = input("Enter port: ")
 
     free42, version = download_latest_free42bin()
 
     print(f"Latest version of Free42 for RP-42 is \x1b[42m{version}\x1b[0m")
 
+    time.sleep(10)
     install_app(free42, port)

@@ -75,6 +75,14 @@
   */
 
 /* USER CODE BEGIN EXPORTED_MACRO */
+extern USBD_HandleTypeDef hUsbDeviceFS; // Assuming Full Speed
+
+extern volatile uint8_t* cdc_rx_buffer;
+extern volatile uint8_t *cdc_rx_write_ptr;
+extern volatile uint8_t *cdc_rx_read_ptr;
+extern volatile uint_fast8_t is_cdc_rx_buffer_full; // Our new RX full flag
+
+extern uint8_t echo_on;
 
 /* USER CODE END EXPORTED_MACRO */
 

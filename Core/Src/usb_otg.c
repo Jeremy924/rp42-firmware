@@ -58,6 +58,8 @@ void MX_USB_OTG_FS_PCD_Init(void)
 
 }
 
+
+
 void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
 {
 
@@ -132,7 +134,8 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
     /* Peripheral clock disable */
     __HAL_RCC_USB_OTG_FS_CLK_DISABLE();
 
-    /**USB_OTG_FS GPIO Configuration
+    /**USB_OTG_FS GPIO Configura
+on
     PA11     ------> USB_OTG_FS_DM
     PA12     ------> USB_OTG_FS_DP
     */

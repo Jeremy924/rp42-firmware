@@ -2105,6 +2105,8 @@ uint8_t USBD_CDC_SetRxBuffer(uint8_t ch, USBD_HandleTypeDef *pdev, uint8_t *pbuf
   */
 uint8_t USBD_CDC_TransmitPacket(uint8_t ch, USBD_HandleTypeDef *pdev)
 {
+
+
   USBD_CDC_ACM_HandleTypeDef *hcdc = NULL;
   USBD_StatusTypeDef ret = USBD_BUSY;
 

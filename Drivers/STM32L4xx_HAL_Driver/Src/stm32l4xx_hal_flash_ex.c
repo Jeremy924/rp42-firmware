@@ -59,6 +59,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
+#define RAM_FUNC __attribute__((section(".ramtext"))) __attribute__((long_call)) __attribute__((noinline))
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
@@ -122,8 +123,9 @@ static void              FLASH_OB_GetPCROP(uint32_t * PCROPConfig, uint32_t * PC
   *
   * @retval HAL Status
   */
-HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t *PageError)
+RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t *PageError)
 {
+	__asm("BKPT #0");
   HAL_StatusTypeDef status;
   uint32_t page_index;
 
@@ -501,7 +503,7 @@ HAL_StatusTypeDef HAL_FLASHEx_ConfigLVEPin(uint32_t ConfigLVE)
   *            @arg FLASH_BANK_BOTH: Bank1 and Bank2 to be erased
   * @retval None
   */
-static void FLASH_MassErase(uint32_t Banks)
+RAM_FUNC static void FLASH_MassErase(uint32_t Banks)
 {
 #if defined (STM32L4P5xx) || defined (STM32L4Q5xx) || defined (STM32L4R5xx) || defined (STM32L4R7xx) || defined (STM32L4R9xx) || defined (STM32L4S5xx) || defined (STM32L4S7xx) || defined (STM32L4S9xx)
   if (READ_BIT(FLASH->OPTR, FLASH_OPTR_DBANK) != 0U)
@@ -591,7 +593,7 @@ void FLASH_PageErase(uint32_t Page, uint32_t Banks)
   * @brief  Flush the instruction and data caches.
   * @retval None
   */
-void FLASH_FlushCaches(void)
+RAM_FUNC void FLASH_FlushCaches(void)
 {
   FLASH_CacheTypeDef cache = pFlash.CacheToReactivate;
 

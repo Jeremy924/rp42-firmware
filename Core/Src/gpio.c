@@ -88,6 +88,11 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  GPIO_InitStruct.Pin = VSENSE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pins : LCD_A0_Pin LCD_CS_Pin LCD_RST_Pin PWR_PERPH_Pin */
   GPIO_InitStruct.Pin = LCD_A0_Pin|LCD_CS_Pin|LCD_RST_Pin|PWR_PERPH_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;

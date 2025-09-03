@@ -54,12 +54,43 @@ struct FileHandleStat {
 	struct stat* stat;
 };
 
+struct TextUIParams {
+	char* text;
+	uint8_t* page;
+	uint8_t* col;
+};
+
+struct NextFileParams {
+	char** file_name;
+	uint8_t attributes;
+};
+
+struct FListParams {
+	char* folder_name;
+	char*** file_list;
+};
+
+struct FileSelectParams {
+	char* result;
+	char* starting_location;
+	char* file_type;
+	unsigned int size_of_result;
+};
+
+struct IconUIParams {
+	uint8_t* bitmap;
+	uint8_t width_bits;
+	uint8_t height_bytes;
+	uint8_t* page;
+	uint8_t* col;
+};
+
 /***
  * @brief Lists the contents of a directory.
  * @param path: Full path to the directory to list (e.g., "0:/", "0:/myfolder").
  * @retval FR_OK if successful, or an error code otherwise.
  */
-FRESULT test_list_directory_contents(const char *path);
+FRESULT print_directory_contents(const char *path);
 
 /**
  * @brief Runs a basic test sequence for FatFs on the QSPI flash drive.

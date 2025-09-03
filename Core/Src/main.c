@@ -44,6 +44,14 @@
 #include "ProgressBar.h"
 #include "tetris.h"
 #include "stm32l4xx_hal_rng.h"
+#include "usbd_cdc_acm_if.h"
+#include "RP.cc"
+#include "COMInterface.h"
+#include "AppInfo.h"
+#include "version.h"
+#include "Graphics.h"
+#include "state.h"
+#include "SystemTimer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,10 +68,14 @@
  * Returns a number from 1 to 37 representing the key currently being pressed, or 255 if no key is being pressed
  */
 
+#define RAM_FUNC __attribute__((section(".ramtext"))) __attribute__((long_call)) __attribute__((noinline))
+#define SYSTEM_CONFIG_VERSION 4
+
 /**
  * A function to test the buttons and screen. This function will never return
  */
 void Basic_Hardware_Test();
+
 
 /**
  * Determines which button in the row is being pressed given the row containing the button being pressed.
@@ -110,12 +122,15 @@ uint8_t* key_queue;
  */
 uint8_t key_queue_size = 0;
 
+
 #define MAX_OPEN_FILES 1
 /**
  * List of currently open files
  */
 unsigned int num_open_files = 0;
 FIL open_files[MAX_OPEN_FILES];
+
+DIR* open_directory;
 
 /**
  * Index in key_queue where the next unprocessed key is located
@@ -131,6 +146,9 @@ uint8_t kqwi = 0;
  * Indicates that the application has started. This is used to prevent key interrupts before the program has started.
  */
 bool has_started = false;
+bool is_shutting_down = false;
+
+SystemConfigData systemConfigData;
 
 /**
  * Struct containing the data from system calls. This data is only updated if the SVC instruction is used, not if system_call
@@ -140,6 +158,7 @@ bool has_started = false;
  */
 SystemCallData __attribute__((section(".SYS_CALL_DATA"))) systemCallData;
 
+void InstallFirmware();
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -150,7 +169,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t rx_buffer[1000];
 /* USER CODE END 0 */
 
 /**
@@ -159,7 +178,6 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
 
@@ -168,13 +186,16 @@ int main(void)
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+  cdc_rx_buffer = rx_buffer;
+
+  //Powerdown();
+
   /* USER CODE BEGIN Init */
   int code = 2; // boot option. 0=run app, 1=run cli over USB, 2=run hardware test
   	  	  	  	// boot option is selected when bootloader() is called
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
   // this may not be necessary?
@@ -196,21 +217,29 @@ int main(void)
   // run the basic_hardware test
   // hardware test should launch like a normal application
   if (code == 2) {
-	  // allocate 1kb for the stack for the hardware test program
-	  __set_PSP(malloc(1000));
+	  clearSegment(3, 0, 132);
 
-	  // switch to app mode and switch to psp
-	  __asm("MRS R0, CONTROL");
-	  __asm("ORR R0, R0, #0x07");
-	  __asm("MSR CONTROL, R0");
-	  __asm("MRS R0, CONTROL");
+	  uint8_t col = 0;
 
-	  // this may not be necessary since instruction cache is not being used
-	  __DSB();
-	  __ISB();
+	  while (1) {
+		  uint8_t key = system_call(0x0002, 0);
 
-	  // start the app
-	  Basic_Hardware_Test();
+		  char str[3] = { '\0', '\0', '\0' };
+		  if (key < 100) {
+			  str[0] = key / 10 + '0';
+			  str[1] = key % 10 + '0';
+		  } else {
+			  str[0] = 'n';
+			  str[1] = 'o';
+		  }
+
+		  uint8_t page = 3;
+		  printText(str, &page, &col);
+		  if (col > 120) {
+			  col = 0;
+			  clearSegment(3, 0, 132);
+		  }
+	  }
   }
 
   /* USER CODE END 2 */
@@ -220,12 +249,147 @@ int main(void)
   while (1)
   {
 	  // if the boot code is not 0 or 2, then run the serial interface
-	  run_console();
+	  run_console(&hUsbDevice);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+
+FRESULT create_system_variable_file(FIL* f) {
+	FRESULT res;
+	FILINFO fno;
+	res = f_stat("/System", &fno);
+	if (res == FR_OK) {
+		f_unlink("/System");
+	}
+
+	FRESULT result = f_mkdir("/System");
+
+	if (result != FR_EXIST && result != FR_OK) return result;
+
+	result = f_open(f, "0:/System/sys.dat", FA_CREATE_ALWAYS | FA_WRITE);
+	if (result != FR_OK) return result;
+
+	systemConfigData.version = SYSTEM_CONFIG_VERSION;
+	systemConfigData.debounce_ms = 5;
+	systemConfigData.bootmode = 0;
+	strcpy(systemConfigData.device_name, "no-name");
+	systemConfigData.fm_major = VERSION_MAJOR;
+	systemConfigData.fm_minor = VERSION_MINOR;
+	systemConfigData.hw_version = VERSION_HW;
+
+	char* data = (char*) &systemConfigData;
+
+	unsigned int bytesWritten;
+	result = f_write(f, data, sizeof(SystemConfigData), &bytesWritten);
+
+	if (result != FR_OK) return result;
+
+	result = f_close(f);
+	if (result != FR_OK) return result;
+
+	result = f_open(f, "/System/sys.dat", FA_READ);
+
+	return result;
+}
+
+void boot_error_handler(char code) {
+	uint8_t page = 3;
+	uint8_t col = 0;
+	setAddress(3, 0);
+	for (unsigned int i = 0; i < 70; i++) {
+		uint8_t blank = 0;
+		sendData(&blank, 1);
+	}
+	printText("BOOT ERROR ", &page, &col);
+	printCharacter(code + '0', &page, &col);
+
+	systemConfigData.bootmode = 1;
+}
+
+void load_system_variables() {
+	FIL f;
+
+	FRESULT result = f_open(&f, "/System/sys.dat", FA_READ);
+	if (result != FR_OK) {
+		if (result == FR_NO_FILE || result == FR_NO_PATH) {
+			result = create_system_variable_file(&f);
+
+			if (result != FR_OK) {
+				boot_error_handler(0);
+				return;
+			}
+		} else {
+			boot_error_handler(1);
+			return;
+		}
+	}
+
+	char* read_buf = &systemConfigData;
+	uint32_t buf_size = sizeof(SystemConfigData);
+	unsigned int bytesRead;
+	result = f_read(&f, read_buf, buf_size, &bytesRead);
+
+	if (bytesRead < sizeof(SystemConfigData)) {
+		f_close(&f);
+		create_system_variable_file(&f);
+	} else {
+		if (systemConfigData.version != SYSTEM_CONFIG_VERSION) {
+			f_close(&f);
+			create_system_variable_file(&f);
+		}
+	}
+
+	result = f_close(&f);
+
+	if (result != FR_OK) {
+		boot_error_handler(2);
+		return;
+	}
+	systemConfigData.fm_major = VERSION_MAJOR;
+	systemConfigData.fm_minor = VERSION_MINOR;
+	systemConfigData.hw_version = VERSION_HW;
+}
+
+void configure_lowspeed(void) {
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+    // Configure the main internal regulator output voltage for low speed
+    if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE2) != HAL_OK) {
+        Error_Handler();
+    }
+
+    // Configure MSI oscillator directly.
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+    RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+    RCC_OscInitStruct.MSICalibrationValue = RCC_MSICALIBRATION_DEFAULT;
+    RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6; // Set MSI to 4 MHz
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;    // Turn the PLL OFF
+
+    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+        Error_Handler();
+    }
+
+    // Initializes the CPU, AHB and APB buses clocks
+    // Set the System Clock source to MSI
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                                  |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI; // Use MSI directly
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;     // HCLK = 4MHz
+
+    // Set the requested APB prescalers
+    // APB1: 4 MHz / 4 = 1 MHz
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    // APB2: 4 MHz / 8 = 0.5 MHz (500 kHz)
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
+
+    // For HCLK <= 16MHz at Voltage Scale 2, Flash Latency is 0
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
+        Error_Handler();
+    }
 }
 
 /**
@@ -234,53 +398,227 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+	  clock_state &= 0b11111100;
 
-  /** Configure the main internal regulator output voltage
-  */
-  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	  if (poll_usb() == 1) {
+		  clock_state |= CLOCK_HIGH;
+		  configure_highspeed();
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
-  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
-  RCC_OscInitStruct.MSICalibrationValue = 0;
-  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
-  RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 30;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
-  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
-  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	  }
+	  else {
+		  clock_state |= CLOCK_LOW;
+		  configure_lowspeed();
+	  }
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
+	    SystemCoreClockUpdate();
+	    HAL_InitTick(TICK_INT_PRIORITY);
+}
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-  {
-    Error_Handler();
-  }
+
+void configure_highspeed() {
+	  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+	  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+	  // Configure the main internal regulator output voltage
+	  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+
+	  // Initializes the RCC Oscillators according to the specified parameters
+	  //in the RCC_OscInitTypeDef structure.
+	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+	  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+	  RCC_OscInitStruct.MSICalibrationValue = 0;
+	  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+	  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
+	  RCC_OscInitStruct.PLL.PLLM = 1;
+	  RCC_OscInitStruct.PLL.PLLN = 40;
+	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
+	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+	  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+
+	  // Initializes the CPU, AHB and APB buses clocks
+
+	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+	                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+	  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
+
+	  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+
+	  /*
+
+	  cdc_rx_write_ptr = cdc_rx_buffer;
+	  cdc_rx_read_ptr = cdc_rx_buffer;
+
+	  MX_USB_OTG_FS_PCD_Init();
+	  MX_USB_DEVICE_Init();*/
+}
+
+void initialize_firmware_install() {
+	if (CSP_QSPI_EnableMemoryMappedMode() != HAL_OK) return;
+
+	__set_MSP(_estack);
+
+
+	__disable_irq();
+
+	InstallFirmware();
+}
+
+RAM_FUNC volatile void InstallFirmware() {
+    __HAL_FLASH_DATA_CACHE_DISABLE();
+    __HAL_FLASH_DATA_CACHE_DISABLE();
+
+	// unlock flash
+	  if(READ_BIT(FLASH->CR, FLASH_CR_LOCK) != 0U)
+	  {
+		/* Authorize the FLASH Registers access */
+		FLASH->KEYR = FLASH_KEY1;
+		FLASH->KEYR = FLASH_KEY2;
+
+		/* Verify Flash is unlocked */
+		if((FLASH->CR & FLASH_CR_LOCK) != 0U)
+		{
+			return;
+		}
+	  }
+
+	  // clear error flags
+	  __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
+
+
+	// mass erase flash
+	// wait for last operation to complete
+	  while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY)) {
+
+	  }
+
+	  /* Mass erase to be done */
+	  SET_BIT(FLASH->CR, FLASH_CR_MER1);
+	  SET_BIT(FLASH->CR, FLASH_CR_STRT);
+
+
+	  /* Wait for last operation to be completed */
+	  while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY)) {
+
+	  }
+
+	  CLEAR_BIT(FLASH->CR, (FLASH_CR_MER1));
+
+
+
+	unsigned int NumberOfDoubleWords = 0x8000 * 2; // 2^18/4
+	__IO uint32_t* address = (__IO uint32_t*) 0x08000000;
+	uint32_t* pData = (uint32_t*) (0x90000000 + 0x7C0000);
+
+	// program it
+    for (uint32_t i = 0; i < NumberOfDoubleWords; i+=2) {
+        // If HAL_FLASH_Program is in Flash, this call will fail.
+        // Consider direct register access for programming.
+    	SET_BIT(FLASH->CR, FLASH_CR_PG);
+    	*address = pData[i];
+    	address++;
+
+    	__ISB();
+
+    	*address = pData[i + 1];
+    	address++;
+
+		  while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY)) {
+
+		  }
+
+    	CLEAR_BIT(FLASH->CR, FLASH_CR_PG);
+    }
+
+    SET_BIT(FLASH->CR, FLASH_CR_LOCK);
+
+    __DSB();                                                          /* Ensure all outstanding memory accesses included
+                                                                         buffered write are completed before reset */
+    SCB->AIRCR  = (uint32_t)((0x5FAUL << SCB_AIRCR_VECTKEY_Pos)    |
+                             (SCB->AIRCR & SCB_AIRCR_PRIGROUP_Msk) |
+                              SCB_AIRCR_SYSRESETREQ_Msk    );         /* Keep priority group unchanged */
+    __DSB();
+
+    NVIC_SystemReset();
+
+    while (1) {
+
+	}
+}
+
+extern uint8_t get_app_info(char* app_name, struct AppInfo* app_info) {
+	app_info->app_name[0] == '\0'; // in case it fails
+	FIL f;
+	FRESULT result = f_open(&f, "/System/apps.dat", FA_READ);
+
+	if (result != FR_OK) {
+		return result;
+	}
+
+	uint32_t bytesRead;
+	do {
+		result = f_read(&f, app_info, sizeof(struct AppInfo), &bytesRead);
+
+		if (result != FR_OK) {
+			f_close(&f);
+			return result;
+		}
+
+		if (bytesRead == sizeof(struct AppInfo)) {
+			if (strcmp(app_info->app_name, app_name) == 0) {
+				return FR_OK;
+			}
+		}
+	} while (bytesRead == sizeof(struct AppInfo));
+
+	f_close(&f);
+	return FR_NO_FILE;
+}
+
+void jumpToSTBootloader() {
+	void (*STBootJump)(void);
+
+	volatile uint32_t BootAddr = 0x1FFF0000;
+
+	__disable_irq();
+	SysTick->CTRL = 0;
+
+	HAL_RCC_DeInit();
+
+	for (int i = 0; i < 5; i++) {
+		NVIC->ICER[i] = 0xffffffff;
+		NVIC->ICPR[i] = 0xffffffff;
+	}
+
+	__enable_irq();
+
+	STBootJump = (void (*)(void)) (*(uint32_t*) ((BootAddr + 4)));
+
+	__set_MSP(*(uint32_t*) BootAddr);
+
+	STBootJump();
+
+	while (1) {
+		// :(
+	}
 }
 
 /* USER CODE BEGIN 4 */
 
-int bootloader() {
+void bootloader_no_exec() {
 	// disable instruction cache for now since it causes weird errors when switching from intenral flash to qspi flash
 	__HAL_FLASH_INSTRUCTION_CACHE_DISABLE();
 	__HAL_FLASH_DATA_CACHE_ENABLE();
@@ -300,15 +638,12 @@ int bootloader() {
 	  // give it 10ms for things to start up
 	  HAL_Delay(10);
 
-	  // scan keyboard to get bootcode
-	  int code = Scan_Keyboard();
-
 	  // initialize tim16 for deboucning
-	  MX_TIM16_Init();
 	  // qspi flash interface
 	  MX_QUADSPI_Init();
+
 	  // screen interface
-	  MX_SPI3_Init();
+	  MX_SPI3_Init(1);
 
 	  // start usb
 	  //MX_USB_OTG_FS_PCD_Init();
@@ -316,7 +651,46 @@ int bootloader() {
 
 	  // initialize fs
 	  MX_FATFS_Init();
+	  FS_mount();
+	  load_system_variables();
 
+	  //init_timer_system();
+}
+
+void test_callback() {
+	uint8_t page = 3;
+	uint8_t col = 0;
+	printText("3", &page, &col);
+}
+
+void test2_callback() {
+	uint8_t page = 3;
+	uint8_t col = 0;
+	printText("2", &page, &col);
+}
+
+void test3_callback() {
+	uint8_t page = 3;
+	uint8_t col = 0;
+	printText("1", &page, &col);
+}
+
+void test4_callback() {
+	uint8_t page = 3;
+	uint8_t col = 0;
+	printText("Ready", &page, &col);
+	//unregister_timer(2);
+	//unregister_timer(1);
+}
+
+int bootloader() {
+	bootloader_no_exec();
+	  // scan keyboard to get bootcode
+	  int code;
+	  if (systemConfigData.bootmode == 0)
+		  code = Scan_Keyboard();
+	  else code = systemConfigData.bootmode;
+	  if (code == 6) jumpToSTBootloader();
 	  /*init_progress_bar();
 	  uint8_t progress = 0;
 	  while (1) {
@@ -331,14 +705,44 @@ int bootloader() {
 	 //		SendKeystrokes(&hUsbDevice, "hello", 1000);
      //HAL_Delay(2000);
 	 // }
+	  SystemClock_Config();
+
+
+	  if (poll_usb() == 1) {
+		  cdc_rx_buffer = malloc(256);
+		  if (cdc_rx_buffer != 0) {
+			  cdc_rx_write_ptr = cdc_rx_buffer;
+			  cdc_rx_read_ptr = cdc_rx_buffer;
+
+			  MX_USB_OTG_FS_PCD_Init();
+			  MX_USB_DEVICE_Init();
+		  }
+	  }
+
+	  MX_TIM16_Init();
+
+	  init_timer_system();
+
+	  //register_timer(6000, test2_callback, 0);
+	  //register_timer(7000, test3_callback, 0);
+	  //register_timer(5000, test_callback, 0);
+	  //register_timer(3000, test4_callback, 0);
 
 	  if (code == 4 || code == 5) run_fatfs_qspi_test(code);
 	  else {
+		  LCD_BUFFER = (uint8_t*) malloc(132 * 4);
 		  if (code == 1) {
-		  MX_USB_OTG_FS_PCD_Init();
-		  MX_USB_DEVICE_Init();
+			  cdc_rx_buffer = (uint8_t*) 0x20000000 + 50000;
+			  cdc_rx_write_ptr = cdc_rx_buffer;
+			  cdc_rx_read_ptr = cdc_rx_buffer;
+
+			  MX_USB_OTG_FS_PCD_Init();
+			  MX_USB_DEVICE_Init();
+			  uint8_t page = 3;
+			  uint8_t col = 0;
+
 		  }
-		  FS_mount();
+		  //run_file_selector("0:", ".dat");
 	  }
 
 /*
@@ -382,26 +786,41 @@ int bootloader() {
 		  //HAL_RNG_GenerateRandomNumber(&hrng, &seed);
 
 		  has_started = true;
+		  LCD_BUFFER = (uint8_t*) malloc(132 * 4);
 		  tetris_main(seed);
 	  }
 
 	  // if code is not 1 or 2 then start application
 	  if (code != 1 && code != 2) {
+		  	has_started = true;
+		    //run_file_selector("/AppData/Free42", ".txt");
 
 		    CSP_QSPI_EnableMemoryMappedMode();
 
 			uint32_t initial_sp = *(__IO uint32_t*)   0x90000000;
 			uint32_t reset_vector = *(__IO uint32_t*) 0x90000004;
+			uint32_t magic = *(__IO uint32_t*) 0x90000188;
+
+			/*if (magic != 0xDECAF) {
+				HAL_QSPI_Abort(&hqspi);
+				uint8_t page = 3;
+				uint8_t col = 0;
+				clearSegment(3, 0, 132);
+				printText("No program found", &page, &col);
+				return 1;
+			}*/
 
 			typedef void (*free42App)(void);
 			free42App jumpToApp = (free42App) reset_vector;
 
+			f_chdir("/AppData/Free42");
+
 			  __set_PSP(initial_sp);
 
-			  __asm("MRS R0, CONTROL");
-			  __asm("ORR R0, R0, #0x07");
-			  __asm("MSR CONTROL, R0");
-			  __asm("MRS R0, CONTROL");
+			  __asm volatile("MRS R0, CONTROL");
+			  __asm volatile("ORR R0, R0, #0x07");
+			  __asm volatile("MSR CONTROL, R0");
+			  __asm volatile("MRS R0, CONTROL");
 
 			  __DSB();
 			  __ISB();
@@ -412,6 +831,10 @@ int bootloader() {
 				//printf("starting\r\n");
 				//printf("%d\r\n", test_app_main());
 			}
+
+			uint8_t screen_buffer[132 * 4];
+			LCD_BUFFER = screen_buffer;
+
 			jumpToApp();
 	  }
 		has_started = true;
@@ -423,6 +846,7 @@ int bootloader() {
 
 
 void pushKeyQueue(uint8_t key) {
+	__disable_irq();
 	// if the queue is full, then attempt to increase its size
 	if (key_queue_size == KEY_QUEUE_CAP-1) {
 		//__asm("BKPT #0");
@@ -439,13 +863,14 @@ void pushKeyQueue(uint8_t key) {
 				if (kqri == KEY_QUEUE_CAP) kqri = 0;
 			}
 			kqri = 0; // queue is filled with items that have not yet been read
-			kqwi = KEY_QUEUE_CAP; // next index to write is the max size of the old queue
+			kqwi = key_queue_size; // next index to write is the max size of the old queue
 			KEY_QUEUE_CAP += 3; // increase its size by 3
 
 			free(key_queue);
 
 			key_queue = new_queue;
 		} else {
+			key_queue_size--;
 			// If it can't resize then just overwrite
 		}
 	}
@@ -453,44 +878,251 @@ void pushKeyQueue(uint8_t key) {
 	key_queue[kqwi++] = key;
 	key_queue_size++;
 	if (kqwi == KEY_QUEUE_CAP) kqwi = 0;
-	/*uint8_t new_kqwi = kqwi + 1;
-	if (new_kqwi == KEY_QUEUE_SIZE) new_kqwi = 0;
 
-	// queue overflowed
-	if (new_kqwi == kqri) {
-		//while (1) {
-			// this is just for testing. In the future it should probably allocate a bigger queue
-		//	__asm("NOP");
-		//}
+	__enable_irq();
+}
+
+#define USB_CONNECTED 1
+#define USB_DISCONNECTED 0
+
+uint8_t poll_usb() {
+	// switch it to digital input to check if it is plugged in or disconnected
+	  GPIO_PinState state = HAL_GPIO_ReadPin(VSENSE_GPIO_Port, VSENSE_Pin);
+
+	  if (state == GPIO_PIN_SET) {
+		  power_state |= POWER_USB;
+		  return USB_CONNECTED;
+	  } else {
+		  power_state &= ~POWER_BATTERY;
+		  return USB_DISCONNECTED;
+	  }
+
+}
+
+void check_usb() {
+	if (is_shutting_down) return;
+	if (poll_usb() == USB_CONNECTED) {
+		//configure_highspeed();
+		show_notification("RP42 Docked");
+	} else {
+		//SystemClock_Config();
+		show_notification("RP42 Disconnected");
+	}
+}
+
+uint8_t last_was_keyup = 0;
+uint8_t checkForKeyUpHandle = 255;
+
+void checkForKeyUp(uint8_t handle) {
+	if (!last_was_keyup) {
+		if (Scan_Keyboard() == 255) {
+			pushKeyQueue(255);
+			last_was_keyup = 1;
+		} else {
+			checkForKeyUpHandle = register_timer(100, checkForKeyUp, 0);
+		}
 	}
 
-	key_queue[kqwi] = key;
-	kqwi = new_kqwi;*/
+	checkForKeyUpHandle = 255;
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	if (!has_started) return;
+	if (!has_started || is_shutting_down) return;
 
-	HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-	HAL_NVIC_DisableIRQ(EXTI1_IRQn);
-	HAL_NVIC_DisableIRQ(EXTI2_IRQn);
-	HAL_NVIC_DisableIRQ(EXTI3_IRQn);
-	HAL_NVIC_DisableIRQ(EXTI4_IRQn);
-
-	HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
-
-	uint8_t key = GetKey(GPIO_Pin);
-
-	pushKeyQueue(key);
+	__HAL_TIM_SET_COUNTER(&htim16, 0);
+	uint32_t new_period = (systemConfigData.debounce_ms) - 1;
+	__HAL_TIM_SET_AUTORELOAD(&htim16, new_period);
 
 	HAL_TIM_Base_Start_IT(&htim16);
 }
 
+void configure_GPIOs_for_powerdown() {
+	// PA10 (row6) -> output high
+    GPIOA->MODER = 0xFFDFFFFF;
+    GPIOA->PUPDR = 0x0000000;
+    GPIOA->BSRR  = 0x00000400;
 
-void Powerdown() {
+
+    // pwr perph (PB8) -> 0 output
+    // Configure GPIOB
+    GPIOB->MODER = 0xFFFDFFFF;
+    GPIOB->PUPDR = 0x00000000;
+    GPIOB->BSRR  = 0x01000000;
+
+    // PC0 = COL0
+
+    // Configure GPIOC
+    GPIOC->MODER = 0xFFFFFFFC; // leave PC0 the same to handle power button inputs
+    GPIOC->PUPDR &= 0x00000003; // leave PC0 the same to handle power button
+}
+
+// to decrease power consumption switch pins to analog input after stopping usb
+void stop_usb() {
+	USBD_Stop(&hUsbDevice); // stop the USB device
+	USBD_DeInit(&hUsbDevice); // deinitilize the USB device
+}
+
+void start_usb() {
+	MX_USB_OTG_FS_PCD_Init();
+	MX_USB_DEVICE_Init();
+}
+
+volatile void Powerdown() {
+	is_shutting_down = true;
+	HAL_TIM_Base_Stop(&htim16);
+	//HAL_TIM_PeriodElapsedCallback(&htim16);
+	HAL_TIM_Base_Stop(&htim15);
+	// close all open files
+	for (unsigned int i = 0; i < num_open_files; i++) {
+		f_close(&open_files[i]);
+	}
+
+
+	// turn off lcd
 	uint8_t command = 0b10101110;
 	sendCommand(&command, 1);
+    HAL_SPI_DeInit(&hspi3);
+
+    // turn off QSPI
+    HAL_QSPI_Abort(&hqspi);
+
+	// save swd bits
+	/*
+	uint32_t maskSWD = GPIO_MODER_MODE13_Msk | GPIO_MODER_MODE14_Msk;
+	uint32_t tempA = GPIOA->MODER & maskSWD;
+
+
+    GPIOA->MODER = (0xFFFFFFFF ^ maskSWD) | tempA; // Set all 16 pins to Analog mode (binary 11 for each pin). Don't set it for swd so we don't lose debugger connection
+
+    GPIOA->PUPDR &= maskSWD; // No pull-up, no pull-down. Everything should be set to 0 except SWD bits should be kept the same
+
+    // Configure GPIOB
+    GPIOB->MODER = 0xFFFFFFFF;
+    GPIOB->PUPDR = 0x00000000;
+
+    // Configure GPIOC
+    GPIOC->MODER = 0xFFFFFFFF;
+    GPIOC->PUPDR = 0x00000000;
+
+    GPIOA->MODER &= ~(GPIO_MODER_MODE10_Msk);
+    GPIOA->MODER |= (1UL << GPIO_MODER_MODE10_Pos);
+    GPIOA->OTYPER &= ~GPIO_OTYPER_OT10;
+    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD10_Msk;
+    GPIOA->BSRR = GPIO_BSRR_BS10;
+
+    GPIOC->MODER &= ~GPIO_MODER_MODE0_Msk;
+    GPIOC->PUPDR &= ~GPIO_PUPDR_PUPD0_Msk;
+    GPIOC->PUPDR |= (2UL << GPIO_PUPDR_PUPD0_Pos);
+
+    HAL_SuspendTick();
+
+    //
+    SystemClock_Config();
+    HAL_ResumeTick();
+
+
+	  MX_GPIO_Init();
+	  HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(PWR_PERPH_GPIO_Port, PWR_PERPH_Pin, SET);
+
+	  // delay
+	  for (int i = 0; i < 10000; i++);
+
+
+
+	  MX_QUADSPI_Init();
+	  CSP_QSPI_EnableMemoryMappedMode();
+	  */
+
+    HAL_SuspendTick();
+	__disable_irq();
+
+    uint32_t states[9] = {
+    		GPIOA->MODER, GPIOA->PUPDR, GPIOA->ODR,
+			GPIOB->MODER, GPIOB->PUPDR, GPIOB->ODR,
+			GPIOC->MODER, GPIOC->PUPDR, GPIOC->ODR
+    };
+
+    /*if (power_state & POWER_USB != 0) {
+    	HAL_PCD_MspDeInit(&hUsbDeviceFS);
+    	USBD_Stop(&hUsbDeviceFS);
+    	USBD_DeInit(&hUsbDeviceFS);
+    	HAL_PCD_DeInit(&hpcd_USB_OTG_FS);
+    }*/
+
+    //USBD_Stop(&hUsbDevice);
+    //USBD_DeInit(&hUsbDevice);
+    //HAL_PCD_DeInit(&hpcd_USB_OTG_FS);
+    //__HAL_RCC_USB_OTG_FS_CLK_DISABLE();
+    //HAL_NVIC_DisableIRQ(OTG_FS_IRQn);
+
+	USBD_Stop(&hUsbDevice); // stop the USB device
+	USBD_DeInit(&hUsbDevice); // deinitilize the USB device
+
+    configure_GPIOs_for_powerdown();
+
+    __HAL_RCC_USB_OTG_FS_CLK_DISABLE();
+    HAL_NVIC_DisableIRQ(OTG_FS_IRQn);
+    HAL_NVIC_ClearPendingIRQ(OTG_FS_IRQn);
+
+    __enable_irq();
+    // stop here
+    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+	is_shutting_down = false;
+
+    // reconfigure clocks
+    SystemClock_Config();
+	MX_TIM16_Init();
+	init_timer_system();
+
+    HAL_ResumeTick();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+
+    //start_usb();
+
+
+    GPIOA->MODER = states[0]; GPIOA->PUPDR = states[1]; GPIOA->ODR = states[2];
+    GPIOB->MODER = states[3]; GPIOB->PUPDR = states[4]; GPIOB->ODR = states[5];
+    GPIOC->MODER = states[6]; GPIOC->PUPDR = states[7]; GPIOC->ODR = states[8];
+
+    if (poll_usb() == 1) {
+    	HAL_NVIC_ClearPendingIRQ(OTG_FS_IRQn);
+
+  	    __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+
+  	  if (cdc_rx_buffer != 0) {
+  		  cdc_rx_write_ptr = cdc_rx_buffer;
+  		  cdc_rx_read_ptr = cdc_rx_buffer;
+
+  		  MX_USB_OTG_FS_PCD_Init();
+  		  MX_USB_DEVICE_Init();
+  	  }
+    }
+
+    /*
+    if (poll_usb() == 1) {
+    	__HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+  	  MX_USB_OTG_FS_PCD_Init();
+  	  MX_USB_DEVICE_Init();
+    }*/
+
+    // re-enable flash for execution
+    CSP_QSPI_EnableMemoryMappedMode();
+
+		MX_SPI3_Init(0);
+
+		/*
+		for (unsigned int p = 0; p < 4; p++) {
+			//memset(LCD_BUFFER + p * 132, 0, 132);
+			setAddress(p, 0);
+			sendData(LCD_BUFFER + p * 132, 132);
+		}*/
+
 }
 
 void fil_to_limited_stat(const FIL* fil_ptr, struct stat* st, int logical_drive_num) {
@@ -646,10 +1278,19 @@ void filinfo_to_stat(const FILINFO* finfo, struct stat* st, int fatfs_logical_dr
     }
 }
 
+
+uint16_t is_user_timer = 0;
+void user_timer_tick(uint8_t handle) {
+	if ((is_user_timer & (1 << handle)) == 0) return;
+
+	is_user_timer &= ~(1 << handle);
+	pushKeyQueue(100 + handle);
+}
+
 #define INDEX_OUT_OF_RANGE 0x0002
 #define INVALID_COMMAND 0x0001
 uint32_t system_status = 0;
-uint8_t LCD_BUFFER[132 * 4];
+uint8_t* LCD_BUFFER;
 
 #define NOP             0x0000
 #define GET_KEY         0x0001
@@ -657,21 +1298,27 @@ uint8_t LCD_BUFFER[132 * 4];
 #define PUSH_KEY        0x0003
 #define RELEASE_KEY     0x0004
 #define CLEAR_KEY_QUEUE 0x0005
+#define SET_DEBOUNCE_TIME 0x0006
+#define POLL_KEY        0x0007
 #define LCD_ON          0x0010
 #define LCD_OFF         0x0011
 #define DRAW_LCD        0x0012
+#define CLEAR_LCD       0x0013
 #define DRAW_PAGE0      0x0018
 #define DRAW_PAGE1      0x0019
 #define DRAW_PAGE2      0x001A
 #define DRAW_PAGE3      0x001B
-#define CLEAR_LCD       0x0013
+
+#define SELECT_FILE     0x1000
 #define POWER_DOWN      0x0020
+#define SWITCH_TO_INSTALLER 0x0021
 #define GET_ERROR       0x0030
 #define CLEAR_ERROR     0x0031
 #define DELAY           0x0040
 #define DELAY_UNTIL     0x0041
 #define MILLIS          0x0042
 #define PASTE           0x0050
+#define COPY            0x0051
 #define FOPEN           0x0100
 #define FCLOSE          0x0101
 #define FREAD           0x0110
@@ -680,11 +1327,22 @@ uint8_t LCD_BUFFER[132 * 4];
 
 #define FSTAT           0x0113
 #define STAT            0x0114
-#define FLIST           0x0120
+#define LIST_FILES      0x0120
 #define FUNLINK         0x0121
 #define FRENAME         0x0122
 #define MKDIR           0x0123
 #define RMDIR           0x0124
+#define OPENDIR         0x0125
+#define CLOSEDIR        0x0126
+#define NEXT_FILE       0x0127
+
+#define PRINT_TEXT      0x0200
+#define DRAW_ICON       0x0201
+#define GET_LCD_BUFFER  0x0202
+#define DRAW_LCD_BUFFER 0x0203
+
+#define REGISTER_TIMER   0x0300
+#define UNREGISTER_TIMER 0x0301
 
 #define SET_STATUS(flag) system_status |= flag
 int TEMP_count = 0;
@@ -692,6 +1350,9 @@ uint32_t system_call(uint16_t command, void* args) {
 	uint32_t return_value = 0;
 	uint8_t key = 255;
 	uint8_t lcd_command = 0;
+
+
+
 	if (command == DRAW_LCD) {
 		uint8_t* buf = (uint8_t*) args;
 
@@ -700,28 +1361,44 @@ uint32_t system_call(uint16_t command, void* args) {
 		}
 
 		UpdateLCD();
+
+		return 0;
 	}
 	switch (command) {
 	case NOP:
 		return *(uint32_t*) args;
 	case POWER_DOWN:
-		__asm("BKPT #0");
 		Powerdown();
+		return 0;
+	case SWITCH_TO_INSTALLER:
+		systemConfigData.bootmode = 1;
+
+		if (update_system_config() != FR_OK) return 1;
+
+		NVIC_SystemReset();
+
 		return 0;
 	case GET_KEY:
 		if (kqri == kqwi) return 254;
 		char key = key_queue[kqri++];
 		if (kqri == KEY_QUEUE_CAP) kqri = 0;
+
 		return key;
 		//return (uint32_t) Scan_Keyboard();
+	case POLL_KEY:
+		char poll_key = Scan_Keyboard();
+		return poll_key;
 	case WA_KEY:
-
 		bool should_wait = false;
 		__disable_irq();
 		should_wait = kqri == kqwi;
 		__enable_irq();
 
+		bool abortedQSPI = false;
+
 		while (should_wait) {
+			HAL_QSPI_Abort(&hqspi);
+			abortedQSPI = true;
 			HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 
 			__disable_irq();
@@ -730,7 +1407,14 @@ uint32_t system_call(uint16_t command, void* args) {
 			//abort_memory_mapped_mode();
 			//reinitialize_qspi();
 		}
+		if (abortedQSPI)
+			CSP_QSPI_EnableMemoryMappedMode();
 		key = key_queue[kqri++];
+
+		if (key == 255) {
+			__asm("NOP");
+		}
+
 		key_queue_size--;
 		//uint8_t key = 255;
 		//while (key == 255) {
@@ -740,12 +1424,19 @@ uint32_t system_call(uint16_t command, void* args) {
 		if (kqri == KEY_QUEUE_CAP) kqri = 0;
 
 		return key;
+	case SET_DEBOUNCE_TIME:
+		uint32_t debounce_time = (uint32_t) args;
+
+
+
+		break;
 	case PUSH_KEY:
 		key = *(uint8_t*) args;
 		if (key < 1 || key > 37) {
 			SET_STATUS(INDEX_OUT_OF_RANGE);
 			break;
 		}
+		break;
 	case RELEASE_KEY:
 		//key_queue[kqwi++] = key;
 
@@ -754,10 +1445,31 @@ uint32_t system_call(uint16_t command, void* args) {
 	case CLEAR_KEY_QUEUE:
 		kqwi = kqri;
 		break;
+	case OPENDIR:
+		if (open_directory != NULL) return -1;
+
+		DIR d;
+		open_directory = &d;
+
+		return (uint32_t) f_opendir(open_directory, (char*) args);
+	case CLOSEDIR:
+		if (open_directory == NULL) return -1;
+
+		return f_closedir(open_directory);
+		open_directory = NULL;
+		break;
+	case NEXT_FILE:
+		if (open_directory == NULL) return -1;
+
+		struct NextFileParams next_file_params = *(struct NextFileParams*) args;
+		FILINFO info;
+		FRESULT status = f_readdir(open_directory, &info);
+		memcpy(*next_file_params.file_name, info.fname, sizeof(info.fname));
+		next_file_params.attributes = info.fattrib;
+		break;
 	case LCD_ON:
-		command = 0b10101111;
 	case LCD_OFF:
-		command = 0b10101110;
+		uint8_t command = 0b10101110;
 		sendCommand(&command, 1);
 		break;
 	case DRAW_LCD:
@@ -765,31 +1477,55 @@ uint32_t system_call(uint16_t command, void* args) {
 
 		//UpdateLCD();
 		break;
+	case GET_LCD_BUFFER:
+		return (uint32_t) LCD_BUFFER;
+	case DRAW_LCD_BUFFER:
+		UpdateLCD();
+		break;
+	case PRINT_TEXT:
+		struct TextUIParams* text_params = (struct TextUIParams*) args;
+		printText(text_params->text, text_params->page, text_params->col);
+
+		break;
+	case DRAW_ICON:
+		struct IconUIParams* icon_params = (struct IconUIParams*) args;
+
+		for (uint8_t y = *icon_params->page; y < *icon_params->page + icon_params->height_bytes; y++) {
+			setAddress(y, *icon_params->col);
+			sendData(icon_params->bitmap + (y - *icon_params->page) * icon_params->width_bits, icon_params->width_bits);
+			//memcpy(LCD_BUFFER + 132 * y + *icon_params->col, icon_params->bitmap + y * icon_params->width_bits, icon_params->width_bits);
+		}
+
+		*icon_params->col += icon_params->width_bits;
+		break;
 	case DRAW_PAGE0:
 	case DRAW_PAGE1:
 	case DRAW_PAGE2:
 	case DRAW_PAGE3:
 		uint8_t* draw_buf = (uint8_t*) args;
 		uint8_t page = command & (0b11); // page is the first two bits in the command
-		uint8_t* end = draw_buf + draw_buf[1] + 2; // start + length + 2 (ignore the start and size)
-		uint8_t* draw_target = LCD_BUFFER + page * 132 + draw_buf[0]; // buf[0] is start index of page
+		uint8_t column = draw_buf[0];
+		uint8_t length = draw_buf[1];
 
-		draw_buf += 2;
-		while (draw_buf != end) {
-			*draw_target = *draw_buf;
-			draw_target++;
-			draw_buf++;
-		}
+		memcpy(LCD_BUFFER + 132 * page + column, draw_buf, length);
 
-		UpdateLCD();
+		setAddress(page, column);
+		sendData(draw_buf, length);
+
 		break;
 	case CLEAR_LCD:
 		for (unsigned int i = 0; i < 132 * 4; i++)
 			LCD_BUFFER[i] = 0;
 		UpdateLCD();
 		break;
+	case SELECT_FILE:
+		struct FileSelectParams* file_select_params = (struct FileSelectParams*) args;
+		run_file_selector(file_select_params->starting_location, file_select_params->file_type, file_select_params->result, file_select_params->size_of_result);
+
+		break;
 	case GET_ERROR:
 		system_status &= *(uint32_t*) args;
+		break;
 	case CLEAR_ERROR:
 		return_value = system_status;
 		break;
@@ -801,10 +1537,26 @@ uint32_t system_call(uint16_t command, void* args) {
 		return HAL_GetTick();
 	case PASTE:
 		char* paste_buf = (char*) args;
-		SendKeystrokes(&hUsbDevice, paste_buf, 1000);
+		//SendKeystrokes(&hUsbDevice, paste_buf, 1000);
+		puts(paste_buf);
 		return 0;
-		//uint16_t length = strlen(paste_buf);
-		//CDC_Transmit_FS(paste_buf, length);
+	case COPY:
+		struct CopyArgs {
+			char* buf;
+			uint32_t length;
+		};
+
+		struct CopyArgs copy_args = *(struct CopyArgs*) args;
+
+		puts("COPY");
+
+		for (int i = 0; i < 10; i++) {
+			for (volatile int j = 0; j < 100000; j++) ;
+			if (Read(copy_args.buf, copy_args.length) != 0) {
+				return 0;
+			}
+		}
+		return 1;
 	case FOPEN:
 		if (num_open_files == MAX_OPEN_FILES) return -1;
 		uint32_t f_handle = num_open_files;
@@ -815,7 +1567,7 @@ uint32_t system_call(uint16_t command, void* args) {
 		if (params->flags == 0) params->flags = FA_READ;
 		else params->flags = FA_WRITE | FA_CREATE_ALWAYS;
 
-		FRESULT status = f_open(f, params->filename, params->flags);
+		status = f_open(f, params->filename, params->flags);
 
 		if (status != FR_OK) return 1;
 
@@ -835,13 +1587,17 @@ uint32_t system_call(uint16_t command, void* args) {
 		num_open_files--;
 		return 0;
 	case FWRITE:
-	case FREAD:
 		struct FileRWParams* rwParams = (struct FileRWParams*) args;
 
 		rwParams->bytesRW = 0;
 		if (rwParams->handle == 0) { // stdin
 			return 0;
 		} else if (rwParams->handle == 1 || rwParams->handle == 2) { // stdout or stderr
+			if (command == FWRITE) {
+
+				printf("%lu", rwParams->bytesRW);
+				return 0;
+			}
 			return 1;
 		}
 
@@ -849,9 +1605,30 @@ uint32_t system_call(uint16_t command, void* args) {
 
 		f = &open_files[rwParams->handle - 3];
 
-		if (command == FREAD)
-			status = f_read(f, rwParams->buf, rwParams->len, (UINT*)&rwParams->bytesRW);
-		else status = f_write(f, rwParams->buf, rwParams->len, (UINT*)&rwParams->bytesRW);
+		status = f_write(f, rwParams->buf, rwParams->len, (UINT*)&rwParams->bytesRW);
+
+		if (status == FR_OK) return 0;
+		return 3;
+	case FREAD:
+		rwParams = (struct FileRWParams*) args;
+
+		rwParams->bytesRW = 0;
+		if (rwParams->handle == 0) { // stdin
+			return 0;
+		} else if (rwParams->handle == 1 || rwParams->handle == 2) { // stdout or stderr
+			if (command == FWRITE) {
+
+				printf("%lu", rwParams->bytesRW);
+				return 0;
+			}
+			return 1;
+		}
+
+		if (rwParams->handle >= num_open_files + 3) return 2; // out of range of file handles
+
+		f = &open_files[rwParams->handle - 3];
+
+		status = f_read(f, rwParams->buf, rwParams->len, (UINT*)&rwParams->bytesRW);
 
 		if (status == FR_OK) return 0;
 		return 3;
@@ -933,6 +1710,20 @@ uint32_t system_call(uint16_t command, void* args) {
 		if (status != FR_OK) return 1;
 
 		return 0;
+	case REGISTER_TIMER:
+		struct TimerRegisterArgs* timer_args = (struct TimerRegisterArgs*) args;
+
+		if (timer_args->millis == 0) return 255;
+
+		uint8_t handle = register_timer(timer_args->millis, user_timer_tick, timer_args->flags);
+
+		is_user_timer |= 1 << handle;
+
+		return handle;
+	case UNREGISTER_TIMER:
+		uint8_t timer_handle = *(uint8_t*) args;
+
+		unregister_timer(timer_handle);
 	default:
 		SET_STATUS(INVALID_COMMAND);
 	}
@@ -960,7 +1751,6 @@ uint8_t GetKey(uint16_t pin)
 	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
 	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-	  //EXTI->IMR1 &= ~(COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
 
 	  ROW0_GPIO_Port->BRR = ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin;
 
@@ -1003,34 +1793,40 @@ uint8_t GetKey(uint16_t pin)
 	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 	  //NVIC_ClearPendingIRQ(EXTPin);
-	  //EXTI->IMR1 |= (COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
 
 	return key_press;
 }
 
+uint8_t debounce_ticks = 0;
+uint8_t last_key = 255;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
+	if (is_shutting_down) return;
+
 	if (htim->Instance == TIM16) {
-		HAL_TIM_Base_Stop_IT(&htim16);
 
 		uint8_t key = Scan_Keyboard();
-		if (key == 255) {
-			// they key had been released during the debounce period
-			pushKeyQueue(255);
+
+		if (key != last_key) {
+			debounce_ticks = 0;
+			last_key = key;
+		} else {
+			debounce_ticks++;
+
+			if (debounce_ticks > 3) {
+				pushKeyQueue(key);
+
+				debounce_ticks = 0;
+
+				HAL_TIM_Base_Stop_IT(&htim16);
+				return;
+			}
 		}
 
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL0_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL1_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL2_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL3_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL4_Pin);
-		  __HAL_GPIO_EXTI_CLEAR_IT(COL5_Pin);
-
-			HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI1_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-			HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+		__HAL_TIM_SET_COUNTER(&htim16, 0);
+		HAL_TIM_Base_Start_IT(&htim16);
+		//EXTI->RTSR1 |= 0x3f; // enable rising edge trigger for columns
+	} else if (htim->Instance == TIM15) {
+		handle_tick();
 	}
 }
 
@@ -1040,65 +1836,64 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
  */
 uint8_t Scan_Keyboard()
 {
+	// set all interrupt pins to input
 	  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-	  GPIO_InitStruct.Pin = COL0_Pin|COL1_Pin|COL2_Pin|COL3_Pin
-	                          |COL4_Pin|COL5_Pin;
-	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	  //EXTI->RTSR1 = 0;
+
+	  // disable interrupts
 	  EXTI->IMR1 &= ~(COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
 
-	uint16_t rows[] = {ROW0_Pin, ROW1_Pin, ROW2_Pin, ROW3_Pin, ROW4_Pin, ROW5_Pin, ROW6_Pin};
-	uint16_t columns = 0b111111;
+	uint8_t key = 255;
 
-	int key_press = 255;
+	// set all output pins to low
+	ROW0_GPIO_Port->BRR = ROW0_Pin | ROW1_Pin | ROW2_Pin | ROW3_Pin | ROW4_Pin | ROW5_Pin | ROW6_Pin;
 
-	for (int r = 0; r < sizeof(rows); r++) {
-		HAL_GPIO_WritePin(ROW0_GPIO_Port, rows[r], SET);
+	// iterate through all the row pins
+	uint16_t row_pins[7] = { ROW0_Pin, ROW1_Pin, ROW2_Pin, ROW3_Pin, ROW4_Pin, ROW5_Pin, ROW6_Pin };
+	uint16_t col_pins[6] = { COL0_Pin, COL1_Pin, COL2_Pin, COL3_Pin, COL4_Pin, COL5_Pin };
 
-		int c = -1;
+	for (unsigned int row = 0; row < sizeof(row_pins) / sizeof(uint16_t); row++) {
+		ROW0_GPIO_Port->BSRR = row_pins[row]; // set the pin to high
 
-		if (HAL_GPIO_ReadPin(COL0_GPIO_Port, COL0_Pin) == GPIO_PIN_SET)
-			c = 0;
-		else 		if (HAL_GPIO_ReadPin(COL1_GPIO_Port, COL1_Pin) == GPIO_PIN_SET)
-			c = 1;
-		else		if (HAL_GPIO_ReadPin(COL2_GPIO_Port, COL2_Pin) == GPIO_PIN_SET)
-			c = 2;
-		else 		if (HAL_GPIO_ReadPin(COL3_GPIO_Port, COL3_Pin) == GPIO_PIN_SET)
-			c = 3;
-		else		if (HAL_GPIO_ReadPin(COL4_GPIO_Port, COL4_Pin) == GPIO_PIN_SET)
-			c = 4;
-		else 		if (HAL_GPIO_ReadPin(COL5_GPIO_Port, COL5_Pin) == GPIO_PIN_SET)
-			c = 5;
+		for (volatile int i = 0; i < 10; i++) ;
 
-		if (c != -1) {
-			int row = r == 8 ? 5 : (r == 10 ? 6 : r);
-			key_press = row * 5 + c + 1;
-			if (row > 0) key_press++;
-			if (row > 1) key_press++;
-			if (row > 2) key_press++;
-			if (key_press > 13) key_press--;
+		uint32_t idr = COL0_GPIO_Port->IDR;
+
+		if (idr != 0) { // an input pin is high which means a key is being pressed
+			for (unsigned int col = 0; col < sizeof(col_pins) / sizeof(uint16_t); col++) { // scan through the columns to figure out which button is being pressed
+				if ((idr & col_pins[col]) != 0) {
+					if (row < 2) { // first 2 rows have 6 buttons
+						key = (row * 6) + col + 1;
+					} else if (row == 2) { // third row is weird due to the enter button
+						if (col == 0) key = 13;
+						else key = 12 + col;
+					} else {
+						key = 18 + (row - 3) * 5 + col;
+					}
+
+					break;
+				}
+			}
 		}
 
-		HAL_GPIO_WritePin(ROW0_GPIO_Port, rows[r], RESET);
+		ROW0_GPIO_Port->BRR  = row_pins[row]; // reset the pin to low
 
-		if (key_press != 255)
-			break;
-
+		if (key != 255) break; // key was found so exit
 	}
 
-	  GPIO_InitStruct.Pin = COL0_Pin|COL1_Pin|COL2_Pin|COL3_Pin
-	                          |COL4_Pin|COL5_Pin;
-	  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-	  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-	  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	// reset everything for interrupts
+	  //EXTI->RTSR1 = 0x3f;
+
+	  // set all output pins to high
+	  ROW0_GPIO_Port->BSRR = ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin;
+
+	  // clear pending interrupts
+	  EXTI->PR1 = (COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
+	  // enable interrupts
 	  EXTI->IMR1 |= (COL0_Pin | COL1_Pin | COL2_Pin | COL3_Pin | COL4_Pin | COL5_Pin);
 
-	  ROW0_GPIO_Port->BSRR = ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin
-              |ROW4_Pin|ROW5_Pin|ROW6_Pin;
-
-	return key_press;
+	return key;
 }
 
 void Basic_Hardware_Test() {
@@ -1120,7 +1915,7 @@ void Basic_Hardware_Test() {
 	  //}
 	  //system_call(CLEAR_LCD, 0);
 	  systemCallData.command = CLEAR_LCD;
-	  __asm("SVC #0");
+	  __asm  volatile("SVC #0");
 
 	  while (1)
 	  {
@@ -1132,7 +1927,7 @@ void Basic_Hardware_Test() {
 		  //HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 		  //if (kqri == kqwi) continue;
 		  systemCallData.command = WA_KEY;
-		  __asm("SVC #0");
+		  __asm volatile("SVC #0");
 		  uint8_t key = (uint8_t) systemCallData.result;//(uint8_t) sys_func(WA_KEY, 0);//key_queue[kqri++];
 
 		  uint8_t ten = key / 10;
@@ -1147,20 +1942,20 @@ void Basic_Hardware_Test() {
 
 		  systemCallData.command = DRAW_PAGE0 + page;
 
-		  uint8_t draw_data[2 + sizeof(characters[0])];
+		  uint8_t draw_data[2 + sizeof(digits[0])];
 		  draw_data[0] = column;
-		  draw_data[1] = sizeof(characters[0]);
-		  for (unsigned int i = 0; i < sizeof(characters[0]); i++)
-			  draw_data[2 + i] = characters[ten][i];
+		  draw_data[1] = sizeof(digits[0]);
+		  for (unsigned int i = 0; i < sizeof(digits[0]); i++)
+			  draw_data[2 + i] = digits[ten][i];
 		  systemCallData.args = draw_data;
 		  systemCallData.command = DRAW_PAGE0 + page;
-		  __asm("SVC #0");
+		  __asm volatile("SVC #0");
 		  //system_call(DRAW_PAGE0 + page, draw_data);
 
-		  draw_data[0] += sizeof(characters[0]);
-		  for (unsigned int i = 0; i < sizeof(characters[0]); i++)
-			  draw_data[2 + i] = characters[one][i];
-		  __asm("SVC #0");
+		  draw_data[0] += sizeof(digits[0]);
+		  for (unsigned int i = 0; i < sizeof(digits[0]); i++)
+			  draw_data[2 + i] = digits[one][i];
+		  __asm volatile("SVC #0");
 		  //system_call(DRAW_PAGE0 + page, draw_data);
 
 

@@ -93,6 +93,8 @@
 #define APP_RX_DATA_SIZE 128
 #define APP_TX_DATA_SIZE 128
 
+uint8_t echo_on = 1;
+
 /** RX buffer for USB */
 uint8_t RX_Buffer[NUMBER_OF_CDC][APP_RX_DATA_SIZE];
 
@@ -137,11 +139,15 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
-char com_buf[RX_BUFFER_SIZE] = { 0 };
-char* com_read_ptr = com_buf;
-char* com_write_ptr = com_buf;
+volatile uint8_t* cdc_rx_buffer;
+volatile uint8_t *cdc_rx_write_ptr;
+volatile uint8_t *cdc_rx_read_ptr;
+volatile uint_fast8_t is_cdc_rx_buffer_full = 0; // Our new RX full flag
 
-uint8_t COM_STATUS = ECHO;
+// This is the buffer USB middleware uses to deliver one packet.
+// Typically defined in usbd_cdc_if.c, e.g., UserRxBufferFS
+// Make sure its size (APP_RX_DATA_SIZE) is at least CDC_DATA_FS_MAX_PACKET_SIZE
+extern uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 
 static int8_t CDC_Init(uint8_t cdc_ch);
 static int8_t CDC_DeInit(uint8_t cdc_ch);
@@ -418,37 +424,75 @@ static int8_t CDC_Control(uint8_t cdc_ch, uint8_t cmd, uint8_t *pbuf, uint16_t l
 
 /**
   * @brief  Data received over USB OUT endpoint are sent over CDC interface
-  *         through this function.
-  *
-  *         @note
-  *         This function will issue a NAK packet on any OUT packet received on
-  *         USB endpoint until exiting this function. If you exit this function
-  *         before transfer is complete on CDC interface (ie. using DMA controller)
-  *         it will result in receiving more data while previous ones are still
-  *         not sent.
-  *
+  * through this function.
   * @param  Buf: Buffer of data to be received
   * @param  Len: Number of data received (in bytes)
-  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
+  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL or USBD_BUSY
   */
-static int8_t CDC_Receive(uint8_t cdc_ch, uint8_t *Buf, uint32_t *Len)
+static int8_t CDC_Receive(uint8_t cdc_ch, uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
-  //HAL_UART_Transmit_DMA(CDC_CH_To_UART_Handle(cdc_ch), Buf, *Len);
-	if (COM_STATUS && ECHO)
-		CDC_Transmit(cdc_ch, Buf, *Len); // echo back on same channel
 
-  USBD_CDC_SetRxBuffer(cdc_ch, &hUsbDevice, &Buf[0]);
-  USBD_CDC_ReceivePacket(cdc_ch, &hUsbDevice);
+	/*
+	if (echo_on) {
+		if (*Len != 1)
+			CDC_Transmit(cdc_ch, Buf, *Len);
+		else if (Buf[0] == '\b') {
+			CDC_Transmit(cdc_ch, "\b \b", 3);
+		} else CDC_Transmit(cdc_ch, Buf, *Len);
+	}*/
+  // --- 1. Calculate remaining space in the ring buffer ---
+  // Note: This is a common way to calculate used/free space.
+  // One slot is kept free to differentiate between empty and full.
+  int32_t used_space;
+  uint8_t* next_write_ptr; // Temporary, for calculation
+
+  // Critical section might be needed here if read_ptr can be modified by another ISR
+  // For simplicity, assuming read_ptr is only modified by main loop for now.
+  // __disable_irq();
+  next_write_ptr = cdc_rx_write_ptr; // Current write pointer
+  // __enable_irq();
+
+  if (next_write_ptr >= cdc_rx_read_ptr) {
+    used_space = next_write_ptr - cdc_rx_read_ptr;
+  } else {
+    used_space = RX_BUFFER_SIZE - (cdc_rx_read_ptr - next_write_ptr);
+  }
+  int32_t free_space = RX_BUFFER_SIZE - used_space - 1; // -1 for the reserved slot
+
+  // --- 2. Check if the entire incoming packet can fit ---
+  if (*Len > free_space) {
+    is_cdc_rx_buffer_full = 1; // Signal that we are (or were) full
+
+    // Re-prime the USB endpoint for the host's next attempt for THIS packet or a new one
+    USBD_CDC_SetRxBuffer(0, &hUsbDevice, UserRxBufferFS);
+    USBD_CDC_ReceivePacket(0, &hUsbDevice);
+    return USBD_BUSY; // Tell host "I'm busy, try sending THIS packet again later"
+  }
+
+  // --- 3. If space is available, copy data to the ring buffer ---
+  is_cdc_rx_buffer_full = 0; // We are accepting data, so not full right now
 
   for (uint32_t i = 0; i < *Len; i++)
   {
-    *com_write_ptr = Buf[i];
-    com_write_ptr++;
-    if (com_write_ptr == com_buf + RX_BUFFER_SIZE)
-      com_write_ptr = com_buf;
-	if (com_write_ptr == com_read_ptr) return USBD_BUSY;
+    *cdc_rx_write_ptr = Buf[i];
+    cdc_rx_write_ptr++;
+    if (cdc_rx_write_ptr == (cdc_rx_buffer + RX_BUFFER_SIZE)) {
+      cdc_rx_write_ptr = cdc_rx_buffer; // Wrap around
+    }
   }
+
+  // --- Optional: Handle Echoing in Main Loop ---
+  // If you need to echo, you would now signal your main loop that new data
+  // has arrived in cdc_rx_buffer. The main loop would read it,
+  // put it into a cdc_tx_echo_buffer, and send it via CDC_Transmit
+  // when the TX channel is free.
+  // Example: Set a flag like new_rx_data_for_echo = 1;
+
+  // --- 4. Re-prime the USB endpoint for the NEXT packet ---
+  USBD_CDC_SetRxBuffer(0, &hUsbDevice, UserRxBufferFS); // Point to the buffer middleware uses
+  USBD_CDC_ReceivePacket(0, &hUsbDevice);              // Tell middleware we are ready for more
+
   return (USBD_OK);
   /* USER CODE END 6 */
 }

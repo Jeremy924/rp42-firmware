@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l4xx_it.h"
+#include "spi.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -55,6 +56,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern TIM_HandleTypeDef htim15;
 extern TIM_HandleTypeDef htim16;
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 /* USER CODE BEGIN EV */
@@ -79,11 +81,34 @@ void NMI_Handler(void)
   /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
+
+void ShowFaultMessage(char* message) {
+	setAddress(0, 0);
+	sendData(icon, 132);
+	setAddress(1, 0);
+	sendData(icon + 132, 132);
+	setAddress(2, 0);
+	sendData(icon + 264, 132);
+	uint8_t page = 3;
+	uint8_t col = 0;
+	memset(LCD_BUFFER + 132 * 3, 0, 132);
+
+	setAddress(3, 0);
+	sendData(LCD_BUFFER + 132 * 3, 132);
+	printText(message, &page, &col);
+}
+
+volatile uint8_t hard_fault_occured = 0;
 /**
   * @brief This function handles Hard fault interrupt.
   */
 void HardFault_Handler(void)
 {
+	if (!hard_fault_occured) {
+		ShowFaultMessage("Fault Detected");
+	}
+	hard_fault_occured = 1;
+
   /* USER CODE BEGIN HardFault_IRQn 0 */
 
   /* USER CODE END HardFault_IRQn 0 */
@@ -115,7 +140,7 @@ void MemManage_Handler(void)
 void BusFault_Handler(void)
 {
   /* USER CODE BEGIN BusFault_IRQn 0 */
-
+	ShowFaultMessage("Bus Fault");
   /* USER CODE END BusFault_IRQn 0 */
   while (1)
   {
@@ -130,7 +155,7 @@ void BusFault_Handler(void)
 void UsageFault_Handler(void)
 {
   /* USER CODE BEGIN UsageFault_IRQn 0 */
-
+	ShowFaultMessage("Usage Fault");
   /* USER CODE END UsageFault_IRQn 0 */
   while (1)
   {
@@ -146,6 +171,7 @@ void SVC_Handler(void)
 {
   /* USER CODE BEGIN SVCall_IRQn 0 */
 	systemCallData.result = system_call(systemCallData.command, systemCallData.args);
+	__HAL_FLASH_INSTRUCTION_CACHE_RESET();
 
   /* USER CODE END SVCall_IRQn 0 */
   /* USER CODE BEGIN SVCall_IRQn 1 */
@@ -277,11 +303,21 @@ void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
+	if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_9)) {
+		__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_9);
+
+		check_usb();
+	}
+
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(COL5_Pin);
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+void TIM1_BRK_TIM15_IRQHandler(void) {
+	HAL_TIM_IRQHandler(&htim15);
 }
 
 /**

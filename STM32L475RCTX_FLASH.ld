@@ -39,14 +39,14 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
 
-_Min_Heap_Size = 0x200; /* required amount of heap */
-_Min_Stack_Size = 0x400; /* required amount of stack */
+_Min_Heap_Size = 0x100; /* required amount of heap */
+_Min_Stack_Size = 0x500; /* required amount of stack */
 
 /* Memories definition */
 MEMORY
 {
   	SYS_CALL_DATA (rw)   : ORIGIN = 0x20000000, LENGTH = 12
-    RAM    (xrw)     : ORIGIN = 0x20000000+12,   LENGTH = 20K-12
+    RAM    (xrw)     : ORIGIN = 0x20000000+12,   LENGTH = 35K-12
 	FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 256K
 
 }
@@ -151,14 +151,14 @@ SECTIONS
     _sdata = .;        /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
-    /**(.RamFunc)*/        /* .RamFunc sections */
-    /**(.RamFunc*)*/       /* .RamFunc* sections */
-
+    . = ALIGN(4);
+    *(.ramtext)           /* Collect all .ramtext sections from input files */
+    *(.ramtext.*)
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
 
   } >RAM AT> FLASH
-
+  
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);
   .bss :

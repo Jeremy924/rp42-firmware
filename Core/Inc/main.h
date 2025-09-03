@@ -28,30 +28,56 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
+#include "AppInfo.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#define RAM_FUNC __attribute__((section(".ramtext"))) __attribute__((long_call)) __attribute__((noinline))
+
+
 typedef struct  __attribute__((packed)) {
 	void* args;
 	uint32_t result;
 	uint16_t command;
 } SystemCallData;
 
+typedef struct __attribute((packed)) {
+	uint16_t version;
+	uint16_t debounce_ms;
+	uint8_t bootmode;
+	uint8_t fm_major;
+	uint8_t fm_minor;
+	uint8_t hw_version;
+	char device_name[15];
+} SystemConfigData;
 
-
+extern SystemConfigData systemConfigData;
 
 //void (*COPY_ISR) (uint16_t length) = NULL;
 //char* COPY_BUF = NULL;
 extern void debounce_time_up();
 extern SystemCallData systemCallData;
 
+extern void initialize_firmware_install();
 extern uint32_t system_call(uint16_t command, void* args);
 extern uint8_t Scan_Keyboard(void);
+
+void bootloader_no_exec();
+int bootloader();
+
+uint8_t poll_usb();
+extern void check_usb();
+
+void timeout_timer(uint8_t handle);
+
+extern uint8_t get_app_info(char* app_name, struct AppInfo* app_info);
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-extern uint8_t LCD_BUFFER[];
+extern uint8_t* LCD_BUFFER;
+
+extern char _estack[];
 
 /* USER CODE END ET */
 
@@ -113,6 +139,13 @@ void Error_Handler(void);
 #define ROW6_GPIO_Port GPIOA
 #define PWR_PERPH_Pin GPIO_PIN_8
 #define PWR_PERPH_GPIO_Port GPIOB
+#define VSENSE_Pin GPIO_PIN_9
+#define VSENSE_GPIO_Port GPIOA
+#define SWDIO_Pin GPIO_PIN_13
+#define SWDIO_GPIO_Port GPIOA
+#define SWDCLK_Pin GPIO_PIN_14
+#define SWDCLK_PGIO_Port GPIOA
+
 
 /* USER CODE BEGIN Private defines */
 

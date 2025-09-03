@@ -122,17 +122,17 @@ extern "C" {
     __IO uint32_t RxState;
   } USBD_CDC_ACM_HandleTypeDef;
 
-#define RX_BUFFER_SIZE 0x1000
+#define RX_BUFFER_SIZE 0x4000
 
 
 #define ECHO 0x01
 extern uint8_t COM_STATUS;
 
+extern uint8_t com_busy;
+extern uint8_t* com_read_ptr;
+extern uint8_t* com_write_ptr;
 
-extern char* com_read_ptr;
-extern char* com_write_ptr;
-
-extern char com_buf[];
+extern uint8_t* com_buf;
 
   /** @defgroup USBD_CORE_Exported_Macros
   * @{

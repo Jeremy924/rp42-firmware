@@ -97,6 +97,7 @@
   */
 
 #ifdef HAL_FLASH_MODULE_ENABLED
+#define RAM_FUNC __attribute__((section(".ramtext"))) __attribute__((long_call)) __attribute__((noinline))
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
@@ -166,7 +167,7 @@ static void          FLASH_Program_Fast(uint32_t Address, uint32_t DataAddress);
   *
   * @retval HAL_StatusTypeDef HAL Status
   */
-HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t Address, uint64_t Data)
+RAM_FUNC HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t Address, uint64_t Data)
 {
   HAL_StatusTypeDef status;
   uint32_t prog_bit = 0;
@@ -643,14 +644,18 @@ uint32_t HAL_FLASH_GetError(void)
   * @param  Timeout maximum flash operation timeout
   * @retval HAL_StatusTypeDef HAL Status
   */
-HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
+RAM_FUNC HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
 {
   /* Wait for the FLASH operation to complete by polling on BUSY flag to be reset.
      Even if the FLASH operation fails, the BUSY flag will be reset and an error
      flag will be set */
 
-  uint32_t tickstart = HAL_GetTick();
+  uint32_t tickstart;
   uint32_t error;
+
+  if (Timeout != HAL_MAX_DELAY) {
+	  tickstart = HAL_GetTick();
+  }
 
   while(__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY))
   {
@@ -693,7 +698,7 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
   * @param  Data specifies the data to be programmed.
   * @retval None
   */
-static void FLASH_Program_DoubleWord(uint32_t Address, uint64_t Data)
+RAM_FUNC static void FLASH_Program_DoubleWord(uint32_t Address, uint64_t Data)
 {
   /* Check the parameters */
   assert_param(IS_FLASH_PROGRAM_ADDRESS(Address));

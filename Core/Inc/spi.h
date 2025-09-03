@@ -34,21 +34,29 @@ extern "C" {
 
 extern SPI_HandleTypeDef hspi3;
 
+extern uint8_t icon[];
+
 /* USER CODE BEGIN Private defines */
 #define LCD_WIDTH 132;
 #define LCD_HEIGHT 32;
 
-extern uint8_t characters[10][5];
+extern uint8_t digits[11][5];
 
 /* USER CODE END Private defines */
 
-void MX_SPI3_Init(void);
+void MX_SPI3_Init(uint8_t);
 
 /* USER CODE BEGIN Prototypes */
 
 void sendCommand(uint8_t* command, size_t count);
 void sendData(uint8_t* data, size_t count);
 void setAddress(int page, int column);
+
+
+void clearSegment(uint8_t page, uint8_t column, uint8_t length);
+void printCharacter(char c, uint8_t* page, uint8_t* column);
+void printText(char* str, uint8_t* page, uint8_t* column);
+
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

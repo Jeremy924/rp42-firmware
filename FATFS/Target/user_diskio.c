@@ -46,7 +46,8 @@
 /* Disk status */
 static volatile DSTATUS Stat = STA_NOINIT;
 
-#define TOTAL_CAPACITY 0x700000
+// take out 256kb for temporarily copying firmware
+#define TOTAL_CAPACITY 0x6C0000
 #define SECTOR_SIZE    _MIN_SS
 #define TOTAL_SECTORS  TOTAL_CAPACITY / SECTOR_SIZE
 

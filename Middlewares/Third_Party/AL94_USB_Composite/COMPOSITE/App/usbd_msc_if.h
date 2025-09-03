@@ -31,7 +31,7 @@
 #include "usbd_msc.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+extern volatile uint8_t g_msc_is_active; // 1 for active, 0 for inactive
 /* USER CODE END INCLUDE */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY

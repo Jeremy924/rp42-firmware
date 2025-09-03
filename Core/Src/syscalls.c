@@ -119,24 +119,48 @@ static int _internal_flush_buffer() {
     }
 }
 
+// --- ANSI Color Code Definitions ---
+// We define these for clarity and easy modification.
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
+/**
+ * @brief Low-level write function for printf, puts, etc.
+ * This version colorizes stderr output (file descriptor 2) in red.
+ */
 __attribute__((weak)) int _write(int file, char *ptr, int len) {
-    // We only handle stdout (1) and stderr (2) for this _write implementation
+    // We only handle stdout (1) and stderr (2)
     if (file != 1 && file != 2) {
-        errno = EBADF; // Bad file descriptor
+        errno = EBADF;
         return -1;
     }
 
-    // Initial check: if USB is not configured and buffer is empty,
-    // we can't proceed. If buffer has data, we might fill it more,
-    // but flushing will fail later if state doesn't change.
-    // The original code returns -1 if not configured, which is strict and simple.
+    // If USB is not ready, we cannot proceed.
     if (hUsbDevice.dev_state != USBD_STATE_CONFIGURED && buffer_current_size == 0) {
-        errno = EIO; // Input/output error
+        errno = EIO;
         return -1;
     }
 
-    int input_bytes_processed = 0; // Number of bytes consumed from the input 'ptr'
+    // --- Start of new logic for colorization ---
+    // If the file is stderr, write the RED color code to the buffer first.
+    if (file == 2) {
+        const char* color_code = ANSI_COLOR_RED;
+        int code_len = strlen(color_code);
+        for (int i = 0; i < code_len; i++) {
+            write_buffer[buffer_current_size] = color_code[i];
+            buffer_current_size++;
+            // If adding the code fills the buffer, flush it.
+            if (buffer_current_size == sizeof(write_buffer)) {
+                if (_internal_flush_buffer() < 0) {
+                    errno = EIO;
+                    return -1; // Critical flush error
+                }
+            }
+        }
+    }
+    // --- End of new logic for colorization ---
 
+    int input_bytes_processed = 0;
     for (int i = 0; i < len; i++) {
         // Add current character from input ptr to our write_buffer
         write_buffer[buffer_current_size] = ptr[i];
@@ -147,7 +171,7 @@ __attribute__((weak)) int _write(int file, char *ptr, int len) {
         if (buffer_current_size == sizeof(write_buffer)) {
             flush_needed = 1; // Buffer is full
         } else if (ptr[i] == '\n' && (file == 1 || file == 2)) {
-            flush_needed = 1; // Newline character encountered for stdout/stderr
+            flush_needed = 1; // Newline character encountered
         }
 
         if (flush_needed) {
@@ -155,36 +179,44 @@ __attribute__((weak)) int _write(int file, char *ptr, int len) {
             int flushed_bytes_count = _internal_flush_buffer();
 
             if (flushed_bytes_count < 0) {
-                // A critical error occurred during flush (e.g., USB became unconfigured).
-                // The characters currently in the buffer (including ptr[i]) were not sent.
                 errno = EIO;
-                // Return -1 to indicate failure. The caller (libc) might retry the whole failed write.
-                // Or, more advanced: return bytes successfully written *before* this failed chunk.
-                // For simplicity here, a critical flush error fails the current _write call.
                 return -1;
             }
 
             if (buffer_size_before_flush_attempt == sizeof(write_buffer) && flushed_bytes_count == 0) {
-                // Buffer was full, tried to flush, but NO bytes went out (e.g., USB NACKing, endpoint busy).
-                // The current character ptr[i] is in the buffer, but we couldn't make space for more.
-                // To prevent an infinite loop (if the condition persists), we should indicate no progress.
-                // Revert adding ptr[i] as it effectively couldn't be accommodated.
                 buffer_current_size--;
                 input_bytes_processed--;
-                errno = EAGAIN; // Or EWOULDBLOCK; "Resource temporarily unavailable"
-                return input_bytes_processed; // Return bytes successfully processed *before* this stall
+                errno = EAGAIN;
+                return input_bytes_processed;
             }
-            // If flushed_bytes_count > 0 but less than buffer_size_before_flush_attempt (partial write),
-            // _internal_flush_buffer has already updated buffer_current_size.
-            // The loop continues, and the buffer might still be full or fill up again.
         }
     }
 
-    // All 'len' bytes from 'ptr' have been processed (copied to write_buffer).
-    // Some or all of it may have been flushed during the process.
-    // The _write system call typically returns the number of bytes "accepted" from the input.
-    return input_bytes_processed; // Should be equal to 'len' if the loop completed fully.
+    // --- Start of new logic for colorization ---
+    // If the file is stderr, write the RESET color code to the buffer afterward.
+    if (file == 2) {
+        const char* color_code = ANSI_COLOR_RESET;
+        int code_len = strlen(color_code);
+        for (int i = 0; i < code_len; i++) {
+            write_buffer[buffer_current_size] = color_code[i];
+            buffer_current_size++;
+            // If adding the code fills the buffer, flush it.
+            if (buffer_current_size == sizeof(write_buffer)) {
+                if (_internal_flush_buffer() < 0) {
+                    errno = EIO;
+                    return -1; // Critical flush error
+                }
+            }
+        }
+        // Force a flush after an error message. This ensures the color is
+        // reset in the terminal immediately, even if the error message
+        // didn't end with a newline.
+        _internal_flush_buffer();
+    }
+    // --- End of new logic for colorization ---
 
+    _internal_flush_buffer();
+    return input_bytes_processed;
 }
 
 int _close(int file)

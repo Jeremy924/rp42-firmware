@@ -20,12 +20,90 @@
 
 #define LogMessage printf
 
+/**
+ * @brief Lists all files in a given folder and returns the count.
+ * @param folder: Null-terminated string of the folder path.
+ * @param file_list: Pointer to a char** that will be allocated and filled with file names.
+ * @return: Number of files found, or -1 on error.
+ */
+uint32_t FLIST(const char* folder, char*** file_list) {
+    FRESULT res;
+    DIR dir;
+    FILINFO fno;
+    uint32_t file_count = 0;
+    char** list = NULL;
+    uint32_t list_size = 10; // Initial allocation for 10 file names
+
+    // Open the directory
+    res = f_opendir(&dir, folder);
+    if (res != FR_OK) {
+        return -1; // Return -1 to indicate an error
+    }
+
+    // Allocate initial memory for the file list
+    list = malloc(list_size * sizeof(char*));
+    if (list == NULL) {
+        f_closedir(&dir);
+        return -1; // Memory allocation failed
+    }
+
+    while (1) {
+        // Read a directory item
+        res = f_readdir(&dir, &fno);
+        if (res != FR_OK || fno.fname[0] == 0) {
+            break; // Break on error or end of directory
+        }
+
+        // Ignore directories
+        if (fno.fattrib & AM_DIR) {
+            continue;
+        }
+
+        // Check if we need to reallocate memory for the list
+        if (file_count >= list_size) {
+            list_size *= 2; // Double the size
+            char** new_list = realloc(list, list_size * sizeof(char*));
+            if (new_list == NULL) {
+                // Free previously allocated memory before returning
+                for (uint32_t i = 0; i < file_count; i++) {
+                    free(list[i]);
+                }
+                free(list);
+                f_closedir(&dir);
+                return -1; // Reallocation failed
+            }
+            list = new_list;
+        }
+
+        // Allocate memory for the file name and copy it
+        list[file_count] = malloc(strlen(fno.fname) + 1);
+        if (list[file_count] == NULL) {
+            // Free all allocated memory
+             for (uint32_t i = 0; i < file_count; i++) {
+                free(list[i]);
+            }
+            free(list);
+            f_closedir(&dir);
+            return -1; // Allocation for file name failed
+        }
+        strcpy(list[file_count], fno.fname);
+        file_count++;
+    }
+
+    f_closedir(&dir);
+
+    // Pass the allocated list back to the caller
+    *file_list = list;
+
+    return file_count;
+}
+
 /***
  * @brief Lists the contents of a directory.
  * @param path: Full path to the directory to list (e.g., "0:/", "0:/myfolder").
  * @retval FR_OK if successful, or an error code otherwise.
  */
-FRESULT test_list_directory_contents(const char *path)
+FRESULT print_directory_contents(const char *path)
 {
 	FATFS QSPI_FatFs;
     FRESULT fr;         // FatFs function result code
@@ -33,21 +111,14 @@ FRESULT test_list_directory_contents(const char *path)
     FILINFO fno;        // File information object
     char item_path[256]; // Buffer for constructing full item path for recursion (optional)
 
-	const char* drive_path = "0:";
-
-	fr = f_mount(&QSPI_FatFs, drive_path, 1);
-
-    LogMessage("\r\nListing directory: %s\r\n", path);
-    LogMessage("--------------------------------------------------\r\n");
-    LogMessage("Type  | Size       | Attributes | Name\r\n");
-    LogMessage("--------------------------------------------------\r\n");
-
     // --- 1. Open the directory ---
     fr = f_opendir(&dir, path);
     if (fr != FR_OK) {
-        LogMessage("ERROR: Failed to open directory '%s'. Code: %d\r\n", path, fr);
+        fputs("ERROR: Failed to open directory\n", stderr);
         return fr;
     }
+
+    LogMessage("\e[4;37mType  |Size        |Attributes  |Name                     |\e[0m\n");
 
     // --- 2. Read directory entries ---
     for (;;) {
@@ -55,6 +126,8 @@ FRESULT test_list_directory_contents(const char *path)
         if (fr != FR_OK || fno.fname[0] == 0) {
             break; // Break on error or end of directory
         }
+
+        if ((fno.fattrib & AM_HID != 0) || (fno.fattrib & AM_SYS) != 0) continue;
 
         // Print item type (Directory or File)
         if (fno.fattrib & AM_DIR) {
@@ -99,14 +172,12 @@ FRESULT test_list_directory_contents(const char *path)
 
     // --- 3. Close the directory ---
     fr = f_closedir(&dir);
-	f_mount(NULL, drive_path, 0);
 
 	if (fr != FR_OK) {
         LogMessage("ERROR: Failed to close directory '%s'. Code: %d\r\n", path, fr);
         // Note: Even if close fails, we've read what we could.
     }
 
-    LogMessage("--------------------------------------------------\r\n");
     if (fr == FR_OK) { // If loop broke due to end of dir, fr might still be FR_OK from last successful readdir
         return FR_OK;
     } else {
@@ -114,6 +185,7 @@ FRESULT test_list_directory_contents(const char *path)
     }
 }
 
+BYTE fatfs_work_buffer[512];
 int FS_mount() {
 	static FATFS QSPI_FatFs;
 	FRESULT fr;
@@ -126,9 +198,18 @@ int FS_mount() {
 	fr = f_mount(&QSPI_FatFs, drive_path, 1);
 
 	if (fr == FR_NO_FILESYSTEM) {
-		BYTE work_buffer[512];
+		uint8_t page = 2;
+		uint8_t col = 0;
+		printText("Filesystem corrupt. See", &page, &col);
+		page = 3;
+		col = 0;
+		printText("Jeremy924.github.io/e000", &page, &col);
 
-		fr = f_mkfs(drive_path, FM_ANY, 0, work_buffer, 512);
+		while (1) {
+		    HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+		}
+
+		fr = f_mkfs(drive_path, FM_ANY, 0, fatfs_work_buffer, sizeof(fatfs_work_buffer));
 
 		// failed to create file system
 		if (fr != FR_OK) {

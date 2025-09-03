@@ -87,9 +87,9 @@ void tetris_frame() {
     }
 
     if (tetris_score / 10 != 0) {
-    	memcpy(LCD_BUFFER + 132 + 120, characters[tetris_score / 10], 5);
+    	memcpy(LCD_BUFFER + 132 + 120, digits[tetris_score / 10], 5);
     }
-    memcpy(LCD_BUFFER + 132 + 125, characters[tetris_score % 10], 5);
+    memcpy(LCD_BUFFER + 132 + 125, digits[tetris_score % 10], 5);
 
     UpdateLCD();
     //printf("Score: %d\r\n", tetris_score);

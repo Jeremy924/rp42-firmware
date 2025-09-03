@@ -53,7 +53,7 @@
   */
 
 /* USER CODE BEGIN PRIVATE_TYPES */
-
+volatile uint8_t g_msc_is_active = 1; // 1 for active, 0 for inactive
 
 // Define DWORD and BYTE if not available from included headers (like integer.h or ff.h)
 #ifndef DWORD
@@ -82,9 +82,8 @@ typedef uint16_t WORD;
 
 // --- QSPI Flash & Filesystem Configuration ---
 
-// IMPORTANT: Define the TOTAL physical size of your QSPI flash chip in bytes.
-// Example for a 16 MByte (128 Mbit) chip:
-#define QSPI_FLASH_TOTAL_SIZE_BYTES  (8UL * 1024 * 1024)
+// 8MB - 256KB for copying firmware and 1MB for temporari
+#define QSPI_FLASH_TOTAL_SIZE_BYTES  0x6C0000
 
 // Define the start address offset in the QSPI flash where the filesystem partition begins.
 #define FILESYSTEM_OFFSET            0x100000UL // 1MB offset
@@ -100,7 +99,7 @@ typedef uint16_t WORD;
 // --- USB MSC Configuration ---
 
 // Calculate the total number of usable sectors for the filesystem partition
-#define STORAGE_BLK_NBR              ((QSPI_FLASH_TOTAL_SIZE_BYTES - FILESYSTEM_OFFSET) / FATFS_SECTOR_SIZE)
+#define STORAGE_BLK_NBR              (QSPI_FLASH_TOTAL_SIZE_BYTES / FATFS_SECTOR_SIZE)
 
 // Define the block size reported to the USB host (must match FATFS_SECTOR_SIZE)
 #define STORAGE_BLK_SIZ              FATFS_SECTOR_SIZE
@@ -268,6 +267,7 @@ int8_t STORAGE_IsReady(uint8_t lun)
   // } else {
   //     return USBD_FAIL;
   // }
+	if (!g_msc_is_active) return (USBD_BUSY);
   return (USBD_OK); // Assume always ready for simplicity
   /* USER CODE END 4 */
 }
@@ -295,6 +295,8 @@ int8_t STORAGE_IsWriteProtected(uint8_t lun)
   */
 int8_t STORAGE_Read(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
 {
+	if (g_msc_is_active == 0) return USBD_BUSY;
+
   /* USER CODE BEGIN 6 */
     HAL_StatusTypeDef status;
 
@@ -345,6 +347,8 @@ int8_t STORAGE_Write(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_
   /* USER CODE BEGIN 7 */
     // This implementation uses the Read-Modify-Erase-Write approach
     // suitable for NOR flash like QSPI.
+
+	if (g_msc_is_active == 0) return USBD_BUSY;
 
     HAL_StatusTypeDef status = HAL_OK;
     // Allocate buffer on stack - ensure stack size is sufficient!

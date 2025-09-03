@@ -5455,6 +5455,11 @@ FRESULT f_mkfs (
 		/* Initialize the allocation bitmap */
 		sect = b_data; nsect = (szb_bit + ss - 1) / ss;	/* Start of bitmap and number of sectors */
 		nb = tbl[0] + tbl[1] + tbl[2];					/* Number of clusters in-use by system */
+
+		unsigned int bar_level = 0;
+
+		unsigned int step_size = nsect / 256;
+		unsigned int step = 0;
 		do {
 			mem_set(buf, 0, szb_buf);
 			for (i = 0; nb >= 8 && i < szb_buf; buf[i++] = 0xFF, nb -= 8) ;
@@ -5462,11 +5467,19 @@ FRESULT f_mkfs (
 			n = (nsect > sz_buf) ? sz_buf : nsect;		/* Write the buffered data */
 			if (disk_write(pdrv, buf, sect, n) != RES_OK) return FR_DISK_ERR;
 			sect += n; nsect -= n;
+
+			step++;
+			if (step == step_size) {
+				step = 0;
+				bar_level++;
+				set_progress(bar_level);
+			}
 		} while (nsect);
 
 		/* Initialize the FAT */
 		sect = b_fat; nsect = sz_fat;	/* Start of FAT and number of FAT sectors */
 		j = nb = cl = 0;
+
 		do {
 			mem_set(buf, 0, szb_buf); i = 0;	/* Clear work area and reset write index */
 			if (cl == 0) {	/* Set entry 0 and 1 */
@@ -5673,6 +5686,7 @@ FRESULT f_mkfs (
 			disk_write(pdrv, buf, b_vol + 1, 1);		/* Write original FSINFO (VBR + 1) */
 		}
 
+		int progress = 0;
 		/* Initialize FAT area */
 		mem_set(buf, 0, (UINT)szb_buf);
 		sect = b_fat;		/* FAT start sector */
@@ -5685,20 +5699,43 @@ FRESULT f_mkfs (
 				st_dword(buf + 0, (fmt == FS_FAT12) ? 0xFFFFF8 : 0xFFFFFFF8);	/* Entry 0 and 1 */
 			}
 			nsect = sz_fat;		/* Number of FAT sectors */
+			int step_size = sz_fat / 256 * 16 / 64;
+			int steps = 0;
+
 			do {	/* Fill FAT sectors */
 				n = (nsect > sz_buf) ? sz_buf : nsect;
 				if (disk_write(pdrv, buf, sect, (UINT)n) != RES_OK) return FR_DISK_ERR;
 				mem_set(buf, 0, ss);
 				sect += n; nsect -= n;
+
+				steps++;
+				if (steps == step_size && progress < 255) {
+					progress+=16;
+					steps = 0;
+					set_progress(progress);
+				}
 			} while (nsect);
 		}
 
+		uint8_t page = 3;
+		uint8_t col  = 0;
+		clearSegment(3, 0, 132);
+		printText("Init root directory", &page, &col);
+		progress = 0;
+		set_progress(progress);
+
+		int step = 0;
 		/* Initialize root directory (fill with zero) */
 		nsect = (fmt == FS_FAT32) ? pau : sz_dir;	/* Number of root directory sectors */
 		do {
 			n = (nsect > sz_buf) ? sz_buf : nsect;
 			if (disk_write(pdrv, buf, sect, (UINT)n) != RES_OK) return FR_DISK_ERR;
 			sect += n; nsect -= n;
+			step++;
+			if (step & 4 == 1) {
+				progress++;
+				set_progress(progress);
+			}
 		} while (nsect);
 	}
 
@@ -5744,6 +5781,11 @@ FRESULT f_mkfs (
 	}
 
 	if (disk_ioctl(pdrv, CTRL_SYNC, 0) != RES_OK) return FR_DISK_ERR;
+
+	clearSegment(3, 0, 132);
+	uint8_t page = 3;
+	uint8_t col = 0;
+	printText("done", &page, &col);
 
 	return FR_OK;
 }

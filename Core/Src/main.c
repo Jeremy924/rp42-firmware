@@ -891,9 +891,11 @@ uint8_t poll_usb() {
 
 	  if (state == GPIO_PIN_SET) {
 		  power_state |= POWER_USB;
+		  power_state &= ~POWER_BATTERY;
 		  return USB_CONNECTED;
 	  } else {
-		  power_state &= ~POWER_BATTERY;
+		  power_state |= POWER_BATTERY;
+		  power_state &= ~POWER_USB;
 		  return USB_DISCONNECTED;
 	  }
 
@@ -901,12 +903,20 @@ uint8_t poll_usb() {
 
 void check_usb() {
 	if (is_shutting_down) return;
+	uint8_t old_power_state = power_state;
+
 	if (poll_usb() == USB_CONNECTED) {
+		//if ((old_power_state & POWER_USB) != POWER_USB)
+		//	reconfigure_clock();
 		//configure_highspeed();
-		show_notification("RP42 Docked");
+		  power_state |= POWER_USB;
+		show_notification("RP-42 Docked");
 	} else {
+		//if ((old_power_state & POWER_BATTERY) != POWER_BATTERY)
+		//	reconfigure_clock();
 		//SystemClock_Config();
-		show_notification("RP42 Disconnected");
+		  power_state &= ~POWER_BATTERY;
+		show_notification("RESET RP-42");
 	}
 }
 
@@ -968,6 +978,91 @@ void start_usb() {
 	MX_USB_DEVICE_Init();
 }
 
+volatile void reconfigure_clock() {
+	is_shutting_down = true;
+	HAL_TIM_Base_Stop(&htim16);
+	//HAL_TIM_PeriodElapsedCallback(&htim16);
+	HAL_TIM_Base_Stop(&htim15);
+	// close all open files
+	//for (unsigned int i = 0; i < num_open_files; i++) {
+	//	f_close(&open_files[i]);
+	//}
+
+
+	// turn off lcd
+	uint8_t command = 0b10101110;
+	sendCommand(&command, 1);
+    HAL_SPI_DeInit(&hspi3);
+
+    // turn off QSPI
+    HAL_QSPI_Abort(&hqspi);
+
+
+    HAL_SuspendTick();
+	__disable_irq();
+
+    uint32_t states[9] = {
+    		GPIOA->MODER, GPIOA->PUPDR, GPIOA->ODR,
+			GPIOB->MODER, GPIOB->PUPDR, GPIOB->ODR,
+			GPIOC->MODER, GPIOC->PUPDR, GPIOC->ODR
+    };
+
+	USBD_Stop(&hUsbDevice); // stop the USB device
+	USBD_DeInit(&hUsbDevice); // deinitilize the USB device
+
+    configure_GPIOs_for_powerdown();
+
+    __HAL_RCC_USB_OTG_FS_CLK_DISABLE();
+    HAL_NVIC_DisableIRQ(OTG_FS_IRQn);
+    HAL_NVIC_ClearPendingIRQ(OTG_FS_IRQn);
+
+    __enable_irq();
+    // stop here
+    //HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+	is_shutting_down = false;
+
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+
+    //start_usb();
+
+
+    GPIOA->MODER = states[0]; GPIOA->PUPDR = states[1]; GPIOA->ODR = states[2];
+    GPIOB->MODER = states[3]; GPIOB->PUPDR = states[4]; GPIOB->ODR = states[5];
+    GPIOC->MODER = states[6]; GPIOC->PUPDR = states[7]; GPIOC->ODR = states[8];
+
+    HAL_ResumeTick();
+    SystemClock_Config();
+
+    // reconfigure clocks
+	MX_TIM16_Init();
+	init_timer_system();
+
+    /*
+    if (poll_usb() == 1) {
+    	HAL_NVIC_ClearPendingIRQ(OTG_FS_IRQn);
+        HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
+
+  	    __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+
+  	  if (cdc_rx_buffer != 0) {
+  		  cdc_rx_write_ptr = cdc_rx_buffer;
+  		  cdc_rx_read_ptr = cdc_rx_buffer;
+
+  		  MX_USB_OTG_FS_PCD_Init();
+  		  MX_USB_DEVICE_Init();
+  	  }
+    }
+*/
+    // re-enable flash for execution
+    CSP_QSPI_EnableMemoryMappedMode();
+
+	MX_SPI3_Init(0);
+}
+
 volatile void Powerdown() {
 	is_shutting_down = true;
 	HAL_TIM_Base_Stop(&htim16);
@@ -987,53 +1082,6 @@ volatile void Powerdown() {
     // turn off QSPI
     HAL_QSPI_Abort(&hqspi);
 
-	// save swd bits
-	/*
-	uint32_t maskSWD = GPIO_MODER_MODE13_Msk | GPIO_MODER_MODE14_Msk;
-	uint32_t tempA = GPIOA->MODER & maskSWD;
-
-
-    GPIOA->MODER = (0xFFFFFFFF ^ maskSWD) | tempA; // Set all 16 pins to Analog mode (binary 11 for each pin). Don't set it for swd so we don't lose debugger connection
-
-    GPIOA->PUPDR &= maskSWD; // No pull-up, no pull-down. Everything should be set to 0 except SWD bits should be kept the same
-
-    // Configure GPIOB
-    GPIOB->MODER = 0xFFFFFFFF;
-    GPIOB->PUPDR = 0x00000000;
-
-    // Configure GPIOC
-    GPIOC->MODER = 0xFFFFFFFF;
-    GPIOC->PUPDR = 0x00000000;
-
-    GPIOA->MODER &= ~(GPIO_MODER_MODE10_Msk);
-    GPIOA->MODER |= (1UL << GPIO_MODER_MODE10_Pos);
-    GPIOA->OTYPER &= ~GPIO_OTYPER_OT10;
-    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD10_Msk;
-    GPIOA->BSRR = GPIO_BSRR_BS10;
-
-    GPIOC->MODER &= ~GPIO_MODER_MODE0_Msk;
-    GPIOC->PUPDR &= ~GPIO_PUPDR_PUPD0_Msk;
-    GPIOC->PUPDR |= (2UL << GPIO_PUPDR_PUPD0_Pos);
-
-    HAL_SuspendTick();
-
-    //
-    SystemClock_Config();
-    HAL_ResumeTick();
-
-
-	  MX_GPIO_Init();
-	  HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin|ROW1_Pin|ROW2_Pin|ROW3_Pin|ROW4_Pin|ROW5_Pin|ROW6_Pin, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(PWR_PERPH_GPIO_Port, PWR_PERPH_Pin, SET);
-
-	  // delay
-	  for (int i = 0; i < 10000; i++);
-
-
-
-	  MX_QUADSPI_Init();
-	  CSP_QSPI_EnableMemoryMappedMode();
-	  */
 
     HAL_SuspendTick();
 	__disable_irq();
@@ -1043,19 +1091,6 @@ volatile void Powerdown() {
 			GPIOB->MODER, GPIOB->PUPDR, GPIOB->ODR,
 			GPIOC->MODER, GPIOC->PUPDR, GPIOC->ODR
     };
-
-    /*if (power_state & POWER_USB != 0) {
-    	HAL_PCD_MspDeInit(&hUsbDeviceFS);
-    	USBD_Stop(&hUsbDeviceFS);
-    	USBD_DeInit(&hUsbDeviceFS);
-    	HAL_PCD_DeInit(&hpcd_USB_OTG_FS);
-    }*/
-
-    //USBD_Stop(&hUsbDevice);
-    //USBD_DeInit(&hUsbDevice);
-    //HAL_PCD_DeInit(&hpcd_USB_OTG_FS);
-    //__HAL_RCC_USB_OTG_FS_CLK_DISABLE();
-    //HAL_NVIC_DisableIRQ(OTG_FS_IRQn);
 
 	USBD_Stop(&hUsbDevice); // stop the USB device
 	USBD_DeInit(&hUsbDevice); // deinitilize the USB device
@@ -1071,12 +1106,6 @@ volatile void Powerdown() {
     HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
 	is_shutting_down = false;
 
-    // reconfigure clocks
-    SystemClock_Config();
-	MX_TIM16_Init();
-	init_timer_system();
-
-    HAL_ResumeTick();
     __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOH_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -1090,8 +1119,17 @@ volatile void Powerdown() {
     GPIOB->MODER = states[3]; GPIOB->PUPDR = states[4]; GPIOB->ODR = states[5];
     GPIOC->MODER = states[6]; GPIOC->PUPDR = states[7]; GPIOC->ODR = states[8];
 
+    HAL_ResumeTick();
+    SystemClock_Config();
+
+    // reconfigure clocks
+	MX_TIM16_Init();
+	init_timer_system();
+
+
     if (poll_usb() == 1) {
     	HAL_NVIC_ClearPendingIRQ(OTG_FS_IRQn);
+        HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
 
   	    __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 
@@ -1104,25 +1142,10 @@ volatile void Powerdown() {
   	  }
     }
 
-    /*
-    if (poll_usb() == 1) {
-    	__HAL_RCC_USB_OTG_FS_CLK_ENABLE();
-  	  MX_USB_OTG_FS_PCD_Init();
-  	  MX_USB_DEVICE_Init();
-    }*/
-
     // re-enable flash for execution
     CSP_QSPI_EnableMemoryMappedMode();
 
-		MX_SPI3_Init(0);
-
-		/*
-		for (unsigned int p = 0; p < 4; p++) {
-			//memset(LCD_BUFFER + p * 132, 0, 132);
-			setAddress(p, 0);
-			sendData(LCD_BUFFER + p * 132, 132);
-		}*/
-
+	MX_SPI3_Init(0);
 }
 
 void fil_to_limited_stat(const FIL* fil_ptr, struct stat* st, int logical_drive_num) {
@@ -1593,12 +1616,10 @@ uint32_t system_call(uint16_t command, void* args) {
 		if (rwParams->handle == 0) { // stdin
 			return 0;
 		} else if (rwParams->handle == 1 || rwParams->handle == 2) { // stdout or stderr
-			if (command == FWRITE) {
+			_write(rwParams->handle, rwParams->buf, rwParams->len);
 
-				printf("%lu", rwParams->bytesRW);
-				return 0;
-			}
-			return 1;
+			rwParams->bytesRW = rwParams->len;
+			return 0;
 		}
 
 		if (rwParams->handle >= num_open_files + 3) return 2; // out of range of file handles
@@ -1614,13 +1635,9 @@ uint32_t system_call(uint16_t command, void* args) {
 
 		rwParams->bytesRW = 0;
 		if (rwParams->handle == 0) { // stdin
+			rwParams->bytesRW = _read(0, rwParams->buf, rwParams->len);
 			return 0;
 		} else if (rwParams->handle == 1 || rwParams->handle == 2) { // stdout or stderr
-			if (command == FWRITE) {
-
-				printf("%lu", rwParams->bytesRW);
-				return 0;
-			}
 			return 1;
 		}
 
@@ -1995,6 +2012,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  ShowFaultMessage("ERROR DETECTED");
   while (1)
   {
   }

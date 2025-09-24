@@ -16,5 +16,6 @@ uint32_t Read(char* buf, uint32_t cap);
 void Write(char* buf, uint32_t size);
 void WriteString(char* buf);
 void _WriteString(char* buf, uint8_t important);
+uint32_t Read(char* buf, uint32_t capacity);
 
 #endif

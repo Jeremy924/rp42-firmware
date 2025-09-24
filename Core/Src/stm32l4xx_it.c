@@ -89,13 +89,19 @@ void ShowFaultMessage(char* message) {
 	sendData(icon + 132, 132);
 	setAddress(2, 0);
 	sendData(icon + 264, 132);
-	uint8_t page = 3;
+	uint8_t page = 2;
 	uint8_t col = 0;
 	memset(LCD_BUFFER + 132 * 3, 0, 132);
 
-	setAddress(3, 0);
+	setAddress(2, 0);
 	sendData(LCD_BUFFER + 132 * 3, 132);
 	printText(message, &page, &col);
+
+	setAddress(3, 0);
+	sendData(LCD_BUFFER + 132 * 3, 132);
+	page = 3;
+	col = 0;
+	printText("Jeremy924.github.io/ERROR", &page, &col);
 }
 
 volatile uint8_t hard_fault_occured = 0;

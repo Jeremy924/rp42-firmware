@@ -42,7 +42,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+void ShowFaultMessage(char* message);
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

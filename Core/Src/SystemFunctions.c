@@ -223,6 +223,80 @@ void touch_command_func(char* args) {
 	fputs(fresult_to_string(result), stderr);
 }
 
+void gclust_command_func(char* args) {
+	char* path = args;
+
+	FIL f;
+
+	FRESULT fr = f_open(&f, path, FA_READ);
+
+	if (fr != FR_OK) {
+		fputs(fresult_to_string(fr), stderr);
+		return;
+	}
+
+	uint32_t bytesRead;
+	char buf;
+	f_read(&f, &buf, 1, &bytesRead);
+
+	printf("Cluster #: %lu\n", f.sect);
+
+	f_close(&f);
+}
+
+void fexpand_command_func(char* args) {
+	char* path = args;
+
+	while (*args != ' ' && *args != '\0') args++;
+
+	if (*args == '\0') {
+		fputs("fexpand {path} {size}\n", stderr);
+		return;
+	}
+
+	*args = '\0';
+	args++;
+	char* end_ptr;
+	uint32_t size = strtol(args, &end_ptr, 10);
+
+	if (end_ptr == args) {
+		fputs("fexpand {path} {size}\n", stderr);
+		return;
+	}
+
+	FIL f;
+	FRESULT fr;
+
+	fr = f_open(&f, path, FA_CREATE_ALWAYS | FA_WRITE);
+
+	if (fr != FR_OK) {
+		fputs(fresult_to_string(fr), stderr);
+		return;
+	}
+
+	fr = f_expand(&f, size, 1); // 1 means require contiguous
+	if (fr != FR_OK) {
+		fputs(fresult_to_string(fr), stderr);
+	}
+
+    // 3. Set the logical file size to match the allocation
+    fr = f_lseek(&f, size);
+    if (fr != FR_OK) {
+        fputs(fresult_to_string(fr), stderr);
+        f_close(&f);
+        return;
+    }
+
+    fr = f_truncate(&f);
+    if (fr != FR_OK) {
+        fputs(fresult_to_string(fr), stderr);
+        f_close(&f);
+        return;
+    }
+
+    f_close(&f);
+}
+
 void mkfs_command_func(char* args) {
 	if (strcmp(args, "yes") != 0) {
 		printf("Confirmation required\n");
@@ -386,7 +460,7 @@ void flashec_command_func(char* args) {
 		fputs("Hardware locked\n", stderr);
 		return;
 	}
-	 for (unsigned int start_address = 0; start_address < 0x10000; start_address += 0x10000) {
+	 for (unsigned int start_address = 0; start_address < 0x100000; start_address += 0x10000) {
 	 //for (unsigned int start_address = 0; start_address < 0x100000; start_address += 0x10000) {
 		 CSP_QSPI_EraseSector(start_address);
 		 set_progress(16 * (start_address / 0x10000));
@@ -741,6 +815,8 @@ struct CLICommand cat_cmd      = { "cat", cat_command_func };
 struct CLICommand pwd_cmd      = { "pwd", pwd_command_func };
 struct CLICommand rm_cmd       = { "rm", rm_command_func };
 struct CLICommand touch_cmd    = { "touch", touch_command_func };
+struct CLICommand fexpand_cmd  = { "fexpand", fexpand_command_func };
+struct CLICommand gclust_cmd   = { "gclust", gclust_command_func };
 struct CLICommand mkfs_cmd     = { "mkfs", mkfs_command_func };
 struct CLICommand rmdir_cmd    = { "rmdir", rmdir_command_func };
 struct CLICommand lscpu_cmd    = { "lscpu", lscpu_command_func };
@@ -800,6 +876,8 @@ void register_all_sys_functions() {
 	register_cli_command(&applist_cmd);
 	register_cli_command(&appdelete_cmd);
 	register_cli_command(&pfirm_cmd);
+	register_cli_command(&fexpand_cmd);
+	register_cli_command(&gclust_cmd);
 }
 
 FRESULT update_system_config() {

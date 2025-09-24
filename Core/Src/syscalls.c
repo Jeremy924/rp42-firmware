@@ -31,6 +31,7 @@
 #include <sys/times.h>
 #include "usbd_cdc_acm_if.h"
 #include "usb_device.h"
+#include "CommandParser.h"
 
 /* Variables */
 extern int __io_putchar(int ch) __attribute__((weak));
@@ -67,7 +68,16 @@ void _exit (int status)
 
 __attribute__((weak)) int _read(int file, char *ptr, int len)
 {
-  (void)file;
+	if (file != 0) return 0;
+
+	uint32_t result = Read(ptr, len);
+
+    uint32_t primask = __get_PRIMASK(); __disable_irq();
+    cdc_rx_read_ptr = cdc_rx_write_ptr;
+     __set_PRIMASK(primask); __enable_irq();
+
+     return result;
+  /*(void)file;
   int DataIdx;
 
   for (DataIdx = 0; DataIdx < len; DataIdx++)
@@ -75,7 +85,7 @@ __attribute__((weak)) int _read(int file, char *ptr, int len)
     *ptr++ = __io_getchar();
   }
 
-  return len;
+  return len;*/
 }
 
 // The user-provided buffer
@@ -103,7 +113,9 @@ static int _internal_flush_buffer() {
     unsigned int iterations = 0;
     do {
     	 status = CDC_Transmit(0, (const uint8_t*)write_buffer, buffer_current_size);
-    	 if (status == USBD_BUSY) HAL_Delay(10);
+    	 if (status == USBD_BUSY) {
+    		 for (volatile int i = 0; i < 10000; i++);
+    	 }
     	 iterations++;
     } while (status == USBD_BUSY && iterations < 20);
 

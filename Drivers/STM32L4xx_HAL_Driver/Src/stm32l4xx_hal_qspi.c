@@ -2634,13 +2634,15 @@ static void QSPI_DMAAbortCplt(DMA_HandleTypeDef *hdma)
 static HAL_StatusTypeDef QSPI_WaitFlagStateUntilTimeout(QSPI_HandleTypeDef *hqspi, uint32_t Flag,
                                                         FlagStatus State, uint32_t Tickstart, uint32_t Timeout)
 {
+	int iterations = 0;
+
   /* Wait until flag is in expected state */
   while((__HAL_QSPI_GET_FLAG(hqspi, Flag)) != State)
   {
     /* Check for the Timeout */
     if (Timeout != HAL_MAX_DELAY)
     {
-      if(((HAL_GetTick() - Tickstart) > Timeout) || (Timeout == 0U))
+      if(((HAL_GetTick() - Tickstart) > Timeout) || (Timeout == 0U) || (iterations > 1000000))
       {
         hqspi->State     = HAL_QSPI_STATE_ERROR;
         hqspi->ErrorCode |= HAL_QSPI_ERROR_TIMEOUT;
@@ -2648,6 +2650,8 @@ static HAL_StatusTypeDef QSPI_WaitFlagStateUntilTimeout(QSPI_HandleTypeDef *hqsp
         return HAL_ERROR;
       }
     }
+
+    iterations++;
   }
   return HAL_OK;
 }

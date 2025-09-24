@@ -341,13 +341,20 @@ uint8_t* getCharacterPixels(char c) {
 	if (c == '!') {
 		return characters + 88;
 	}
-
 	if (c == '.')  {
 		return characters + 144;
 	}
 
 	if (c == '>') {
 		return characters + 182;
+	}
+
+	if (c == '-') {
+		return characters + 52;
+	}
+
+	if (c == '_') {
+		return characters + 56;
 	}
 
 	if (c == '<') return characters + 186;

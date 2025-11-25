@@ -186,6 +186,29 @@ void mkdir_command_func(char* args) {
 	fputs(fresult_to_string(result), stderr);
 }
 
+void getaddr_command_func(char* args) {
+	char* file_name = args;
+
+	FIL f;
+	FRESULT status = f_open(&f, file_name, FA_READ);
+
+	UINT bytes_read;
+	uint8_t buffer;
+	if (status == FR_OK) status = f_read(&f, (void*)&buffer, 1, &bytes_read);
+
+	if (status != FR_OK) {
+		fputs("Failed to open file\n", stderr);
+		return;
+	}
+
+	uint32_t sector_size = 0x6C0000 / 512;
+	uint32_t flashAddress = f.sect * sector_size + 0x100000;
+
+	printf("%u\n", flashAddress);
+
+	f_close(&f);
+}
+
 void cat_command_func(char* args) {
 	char* file = args;
 	FIL f;
@@ -859,6 +882,7 @@ struct CLICommand applist_cmd  = { "applist", applist_command_func };
 struct CLICommand appupdate_cmd= { "appinfo_update", appinfo_update_command_func };
 struct CLICommand appdelete_cmd= { "appdelete", appinfo_delete_command_func };
 struct CLICommand pfirm_cmd    = { "pfirm", pfirm_command_func };
+struct CLICommand getaddr_cmd  = { "getaddr", getaddr_command_func };
 
 void register_all_sys_functions() {
 
@@ -902,6 +926,7 @@ void register_all_sys_functions() {
 	register_cli_command(&pfirm_cmd);
 	register_cli_command(&fexpand_cmd);
 	register_cli_command(&gclust_cmd);
+	register_cli_command(&getaddr_cmd);
 }
 
 FRESULT update_system_config() {

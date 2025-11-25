@@ -1597,7 +1597,6 @@ uint32_t system_call(uint16_t command, void* args) {
 		break;
 	case DELAY:
 	case DELAY_UNTIL:
-		register_timer(millis, function, flags)
 		break;
 	case MILLIS:
 		return HAL_GetTick();

@@ -58,7 +58,7 @@ void run_console(USBD_HandleTypeDef* hUsbDeviceFS) {
 #define BAR_UPDATE_FREQ 5
 #define START_ERR       WriteString("\033[31m");
 #define END_ERR         WriteString("\033[0m\n");
-
+    printf("Jeremy's Obvious SHell (JOSH)\n");
 
 	uint8_t current_menu = MAIN_MENU;
 

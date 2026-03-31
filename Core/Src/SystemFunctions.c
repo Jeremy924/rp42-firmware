@@ -268,6 +268,40 @@ void touch_command_func(char* args) {
 	fputs(fresult_to_string(result), stderr);
 }
 
+void write_command_func(char* args) {
+	char* file_path = args;
+
+	if (*file_path == '\0') {
+		fputs("write {path} {start} {length}\n", stderr);
+		return;
+	}
+
+	while (*args != '\0' && *args != ' ') {
+		args++;
+	}
+
+	if (*args == '\0') {
+		fputs("write {path} {start} {length}\n", stderr);
+		return;
+	}
+
+	uint32_t start;
+	uint32_t length;
+	_flashrw_get_args(args, &start, &length);
+
+	uint8_t* buffer = (uint8_t*) malloc(length);
+	if (buffer == NULL) {
+		fputs("Not enough memory\n", stderr);
+		return;
+	}
+
+	memset(buffer, 0, length);
+
+	readfill_stdin(buffer, length);
+
+	free(buffer);
+}
+
 void gclust_command_func(char* args) {
 	char* path = args;
 
@@ -883,6 +917,7 @@ struct CLICommand appupdate_cmd= { "appinfo_update", appinfo_update_command_func
 struct CLICommand appdelete_cmd= { "appdelete", appinfo_delete_command_func };
 struct CLICommand pfirm_cmd    = { "pfirm", pfirm_command_func };
 struct CLICommand getaddr_cmd  = { "getaddr", getaddr_command_func };
+struct CLICommand write_cmd    = { "fwrite", write_command_func };
 
 void register_all_sys_functions() {
 
@@ -927,6 +962,7 @@ void register_all_sys_functions() {
 	register_cli_command(&fexpand_cmd);
 	register_cli_command(&gclust_cmd);
 	register_cli_command(&getaddr_cmd);
+	register_cli_command(&write_cmd);
 }
 
 FRESULT update_system_config() {
